@@ -26,7 +26,10 @@ enum AppendWithVoiceStyle: String, CaseIterable, Identifiable {
 
 struct AdvancedSettingsView: View {
     @AppStorage(UserDefaultsStorage.Keys.modelDownloadHost)
-    private var modelDownloadHost = LocalModelDownloader.ModelHost.huggingFace.rawValue
+    private var modelDownloadHost = LocalModelDownloader.ModelHost.qiniu.rawValue
+
+    @AppStorage(UserDefaultsStorage.Keys.customModelBaseURL)
+    private var customModelBaseURL = ""
 
     @Environment(AppState.self) private var appState
 
@@ -244,11 +247,23 @@ struct AdvancedSettingsView: View {
 
             Section {
                 Picker("Model Download Server", selection: $modelDownloadHost) {
+                    Text("Qiniu (Fast)").tag("qiniu")
                     Text("Hugging Face").tag("huggingFace")
                     Text("HF Mirror (China)").tag("mirror")
+                    Text("Custom URL").tag("custom")
                 }
                 .onChange(of: modelDownloadHost) { _, _ in
                     HapticManager.selectionChanged()
+                }
+
+                if modelDownloadHost == "custom" {
+                    TextField("https://your-cdn.com/models/", text: $customModelBaseURL)
+                        .textInputAutocapitalization(.never)
+                        .autocorrectionDisabled()
+                        .keyboardType(.URL)
+                    Text("Files are expected as <base>/<model-name>.zip, for example <base>/openai_whisper-large-v3-v20240930_turbo_632MB.zip")
+                        .font(.caption)
+                        .foregroundStyle(.secondary)
                 }
             } header: {
                 Text("Model Downloads")

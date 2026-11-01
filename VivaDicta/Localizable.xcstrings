@@ -4383,6 +4383,16 @@
         }
       }
     },
+    "Files are expected as <base>/<model-name>.zip, for example <base>/openai_whisper-large-v3-v20240930_turbo_632MB.zip": {
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "文件路径应为 <base>/<模型名称>.zip，例如 <base>/openai_whisper-large-v3-v20240930_turbo_632MB.zip"
+          }
+        }
+      }
+    },
     "Filler words like \"uh\", \"um\", and \"hmm\" are now also stripped in Russian (ээ, э-э, эм), Spanish (ehm), German (äh, ähm), and French (euh).": {
       "extractionState": "stale",
       "localizations": {
@@ -8026,6 +8036,16 @@
           "stringUnit": {
             "state": "translated",
             "value": "旁遮普语"
+          }
+        }
+      }
+    },
+    "Qiniu (Fast)": {
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "七牛云（推荐）"
           }
         }
       }
@@ -11870,7 +11890,7 @@
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
-            "value": "Whisper 模型托管在 Hugging Face，在中国大陆访问缓慢或无法访问。选择镜像可加快下载。Parakeet 模型始终使用 Hugging Face。"
+            "value": "Whisper 模型托管在 Hugging Face，在中国大陆访问缓慢或无法访问。建议使用七牛云下载，速度更快。Parakeet 模型始终使用 Hugging Face。"
           }
         }
       }
@@ -12107,6 +12127,16 @@
           "stringUnit": {
             "state": "translated",
             "value": "gpt-4、llama-3.1-70b 等"
+          }
+        }
+      }
+    },
+    "https://your-cdn.com/models/": {
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "https://your-cdn.com/models/"
           }
         }
       }

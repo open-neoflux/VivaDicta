@@ -3,6 +3,7 @@
 @preconcurrency import FluidAudio
 import Foundation
 import TranscriptionCore
+import ZIPFoundation
 import WhisperKit
 
 /// Stateless download helpers that wrap WhisperKit + FluidAudio. The app's
@@ -30,12 +31,24 @@ public enum LocalModelDownloader {
     public enum ModelHost: String, Sendable, CaseIterable {
         case huggingFace
         case mirror
+        /// Project-hosted CDN. Ships as the default because Hugging Face is
+        /// unreachable for most users in mainland China and the mirror is slow.
+        case qiniu
+        /// A self-hosted zip of one model variant, e.g. on a CDN.
+        case custom
 
-        /// Host passed to `WhisperKit.download(endpoint:)`.
+        /// Uses any of the zip-based ("custom" archive) download paths.
+        public var usesZipArchive: Bool {
+            self == .qiniu || self == .custom
+        }
+
+        /// Host passed to `WhisperKit.download(endpoint:)`. Only meaningful for
+        /// the two repository-backed options.
         public var whisperKitEndpoint: String {
             switch self {
             case .huggingFace: "https://huggingface.co"
             case .mirror: "https://hf-mirror.com"
+            case .qiniu, .custom: "https://huggingface.co"
             }
         }
 
@@ -43,7 +56,76 @@ public enum LocalModelDownloader {
             switch self {
             case .huggingFace: "Hugging Face"
             case .mirror: "HF Mirror"
+            case .qiniu: "Qiniu CDN"
+            case .custom: "Custom URL"
             }
+        }
+    }
+
+    /// Downloads a zipped model variant from a self-hosted URL and unpacks it
+    /// into the WhisperKit cache layout.
+    ///
+    /// The archive must contain a single top-level folder named after the model
+    /// variant (e.g. `openai_whisper-large-v3-v20240930_turbo_632MB/`).
+    public static func downloadZippedWhisperKit(
+        modelName: String,
+        from remoteURL: URL,
+        onPhase: @escaping WhisperKitPhaseHandler
+    ) async throws {
+        let destination = WhisperKitModelPath.directory(forModelName: modelName)
+        if FileManager.default.fileExists(atPath: destination.path) {
+            onPhase(.downloading(fractionCompleted: 1.0))
+            return
+        }
+
+        let parent = destination.deletingLastPathComponent()
+        try FileManager.default.createDirectory(at: parent, withIntermediateDirectories: true)
+
+        onPhase(.downloading(fractionCompleted: 0))
+
+        let (tempFile, response) = try await URLSession.shared.download(from: remoteURL)
+        if let http = response as? HTTPURLResponse, !(200...299).contains(http.statusCode) {
+            throw LocalModelDownloadError.badStatus(http.statusCode)
+        }
+        onPhase(.downloading(fractionCompleted: 0.9))
+
+        // `download(from:)` hands back a temp file that disappears when this
+        // scope ends, so move it somewhere stable before unzipping.
+        let archive = parent.appendingPathComponent("\(modelName).zip")
+        try? FileManager.default.removeItem(at: archive)
+        try FileManager.default.moveItem(at: tempFile, to: archive)
+        defer { try? FileManager.default.removeItem(at: archive) }
+
+        let unpackRoot = parent.appendingPathComponent(".unzip-\(UUID().uuidString)")
+        try FileManager.default.createDirectory(at: unpackRoot, withIntermediateDirectories: true)
+        defer { try? FileManager.default.removeItem(at: unpackRoot) }
+
+        try unzip(archive, into: unpackRoot)
+
+        // Accept both `root/<modelName>/` and a flat `root/*`.
+        let nested = unpackRoot.appendingPathComponent(modelName, isDirectory: true)
+        let source = FileManager.default.fileExists(atPath: nested.path) ? nested : unpackRoot
+        try moveContents(of: source, into: destination)
+
+        guard FileManager.default.fileExists(atPath: destination.path) else {
+            throw LocalModelDownloadError.emptyArchive
+        }
+        onPhase(.downloading(fractionCompleted: 1.0))
+    }
+
+    /// Unpacks an archive with ZIPFoundation (pure Swift - iOS ships no
+    /// `unzip` binary, and `libarchive` headers are not in the SDK).
+    private static func unzip(_ archive: URL, into directory: URL) throws {
+        try FileManager.default.unzipItem(at: archive, to: directory)
+    }
+
+    private static func moveContents(of source: URL, into destination: URL) throws {
+        let fm = FileManager.default
+        try fm.createDirectory(at: destination, withIntermediateDirectories: true)
+        for item in try fm.contentsOfDirectory(at: source, includingPropertiesForKeys: nil) {
+            let target = destination.appendingPathComponent(item.lastPathComponent)
+            try? fm.removeItem(at: target)
+            try fm.moveItem(at: item, to: target)
         }
     }
 
@@ -102,6 +184,7 @@ public enum LocalModelDownloader {
     public static func downloadAndPrepareWhisperKit(
         modelName: String,
         host: ModelHost = .huggingFace,
+        customArchiveURL: URL? = nil,
         onPhase: @escaping WhisperKitPhaseHandler
     ) async throws {
         let config = WhisperKitConfig(
@@ -120,6 +203,9 @@ public enum LocalModelDownloader {
         if FileManager.default.fileExists(atPath: modelFolder.path) {
             whisperKit.modelFolder = modelFolder
             onPhase(.downloading(fractionCompleted: 1.0))
+        } else if host.usesZipArchive, let customArchiveURL {
+            try await downloadZippedWhisperKit(modelName: modelName, from: customArchiveURL, onPhase: onPhase)
+            whisperKit.modelFolder = modelFolder
         } else {
             let downloadedFolder = try await WhisperKit.download(
                 variant: modelName,
@@ -143,5 +229,21 @@ public enum LocalModelDownloader {
 
         await whisperKit.unloadModels()
         onPhase(.finished)
+    }
+}
+
+
+/// Failures specific to self-hosted model archives.
+public enum LocalModelDownloadError: LocalizedError {
+    case badStatus(Int)
+    case unzipFailed(String)
+    case emptyArchive
+
+    public var errorDescription: String? {
+        switch self {
+        case .badStatus(let code): "Server returned HTTP \(code)."
+        case .unzipFailed(let detail): "Could not unzip the model archive: \(detail)"
+        case .emptyArchive: "The model archive did not contain the expected folder."
+        }
     }
 }

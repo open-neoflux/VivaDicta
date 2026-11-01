@@ -75,9 +75,44 @@ class ModelDownloadManager {
     /// Which host WhisperKit downloads from. Users in mainland China usually
     /// cannot reach huggingface.co at all, so the mirror is selectable in
     /// Settings → Models.
+    /// Built-in CDN used by the "Qiniu" option, so users never have to type a
+    /// URL. Archives live at `<base>/<whisperKitVariant>.zip`.
+    static let qiniuModelBase = "http://tntulx4vr.hd-bkt.clouddn.com/"
+
+    /// Defaults to Qiniu: Hugging Face is unreachable for most users in
+    /// mainland China, and the public mirror runs ~27x slower.
     static var configuredModelHost: LocalModelDownloader.ModelHost {
         let raw = UserDefaults.standard.string(forKey: UserDefaultsStorage.Keys.modelDownloadHost)
-        return LocalModelDownloader.ModelHost(rawValue: raw ?? "") ?? .huggingFace
+        return LocalModelDownloader.ModelHost(rawValue: raw ?? "") ?? .qiniu
+    }
+
+    /// Base URL of the self-hosted model archive, e.g.
+    /// `https://cdn.example.com/whisper/`. The file name is derived from the
+    /// WhisperKit variant, so a 632 MB turbo build lives at
+    /// `<base>/openai_whisper-large-v3-v20240930_turbo_632MB.zip`.
+    static var configuredCustomModelBaseURL: URL? {
+        let raw = UserDefaults.standard.string(forKey: UserDefaultsStorage.Keys.customModelBaseURL) ?? ""
+        let trimmed = raw.trimmingCharacters(in: .whitespacesAndNewlines)
+        guard !trimmed.isEmpty else { return nil }
+        return URL(string: trimmed)
+    }
+
+    /// Resolves the archive URL for one variant.
+    ///
+    /// Accepts either a base directory (`https://cdn.example.com/models/`) or a
+    /// full file URL (`https://cdn.example.com/models/turbo.zip`). The latter is
+    /// only honoured when it actually names a zip, so pasting a direct link
+    /// works for the common single-model case.
+    static func customArchiveURL(forVariant variant: String) -> URL? {
+        if configuredModelHost == .qiniu {
+            return URL(string: qiniuModelBase)?
+                .appendingPathComponent("\(variant).zip")
+        }
+        guard let base = configuredCustomModelBaseURL else { return nil }
+        if base.pathExtension.lowercased() == "zip" {
+            return base
+        }
+        return base.appendingPathComponent("\(variant).zip")
     }
 
     /// Download progress per model (0.0 to 1.0), keyed by model name.
@@ -279,6 +314,7 @@ class ModelDownloadManager {
             try await LocalModelDownloader.downloadAndPrepareWhisperKit(
                 modelName: whisperKitModelName,
                 host: Self.configuredModelHost,
+                customArchiveURL: Self.customArchiveURL(forVariant: whisperKitModelName),
                 onPhase: { [weak self] phase in
                     Task { @MainActor in
                         guard let self else { return }

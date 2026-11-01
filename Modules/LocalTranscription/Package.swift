@@ -17,6 +17,9 @@ let package = Package(
         .package(path: "../TestUtilities"),
         .package(url: "https://github.com/argmaxinc/WhisperKit.git", branch: "main"),
         .package(url: "https://github.com/FluidInference/FluidAudio", exact: "0.13.6"),
+        // Pure-Swift zip handling; iOS has no unzip binary, and libarchive's
+        // headers are not exported by the SDK.
+        .package(url: "https://github.com/weichsel/ZIPFoundation", exact: "0.9.20"),
     ],
     targets: [
         .target(
@@ -26,6 +29,7 @@ let package = Package(
                 .product(name: "WhisperKit", package: "WhisperKit"),
                 .product(name: "SpeakerKit", package: "WhisperKit"),
                 .product(name: "FluidAudio", package: "FluidAudio"),
+                .product(name: "ZIPFoundation", package: "ZIPFoundation"),
             ]
         ),
         .target(

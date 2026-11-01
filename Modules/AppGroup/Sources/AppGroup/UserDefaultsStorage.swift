@@ -57,6 +57,10 @@ public enum UserDefaultsStorage {
         /// "huggingFace" or "mirror". Mainland China cannot reach huggingface.co
         /// reliably, so model downloads fall back to hf-mirror.com.
         public static let modelDownloadHost = "modelDownloadHost"
+
+        /// Base URL for self-hosted model archives (trailing slash optional).
+        /// Files are expected at `<base>/<whisperKitVariant>.zip`.
+        public static let customModelBaseURL = "customModelBaseURL"
         public static let audioRetentionDays = "audioRetentionDays"
         public static let isAutoNoteCleanupEnabled = "isAutoNoteCleanupEnabled"
         public static let noteRetentionDays = "noteRetentionDays"
