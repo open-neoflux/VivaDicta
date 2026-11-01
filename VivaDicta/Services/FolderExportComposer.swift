@@ -22,9 +22,9 @@ nonisolated enum FolderExportWriteMode: String, CaseIterable, Identifiable, Send
 
     var displayName: String {
         switch self {
-        case .replace: "Replace file"
-        case .append: "Add to end"
-        case .prepend: "Add to top"
+        case .replace: String(localized: "Replace file")
+        case .append: String(localized: "Add to end")
+        case .prepend: String(localized: "Add to top")
         }
     }
 }

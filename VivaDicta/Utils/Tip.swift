@@ -73,7 +73,7 @@ struct SelectTranscriptionModelTipMainView: Tip {
     
     var actions: [Action] {
         [
-            Tip.Action(id: "go-to-models", title: "Open Models")
+            Tip.Action(id: "go-to-models", title: String(localized: "Open Models"))
         ]
     }
     

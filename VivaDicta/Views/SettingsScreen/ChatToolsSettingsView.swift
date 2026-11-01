@@ -17,7 +17,7 @@ struct ChatToolsSettingsView: View {
     @State private var isExaConfigured = ExaAPIKeyManager.isConfigured
 
     @AppStorage(SmartSearchFeature.isEnabledKey)
-    private var isSmartSearchEnabled = true
+    private var isSmartSearchEnabled = false
 
     var body: some View {
         Form {

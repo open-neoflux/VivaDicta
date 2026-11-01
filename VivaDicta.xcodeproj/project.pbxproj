@@ -31,10 +31,10 @@
 		18B89BC32FB875530007FA96 /* TranscriptionKit in Frameworks */ = {isa = PBXBuildFile; productRef = 18B89BC22FB875530007FA96 /* TranscriptionKit */; };
 		18B8BEB12FB8BD7D0007FA96 /* DesignSystem in Frameworks */ = {isa = PBXBuildFile; productRef = 18B8BEB02FB8BD7D0007FA96 /* DesignSystem */; };
 		18B8CF2C2FB8C4690007FA96 /* DesignSystem in Frameworks */ = {isa = PBXBuildFile; productRef = 18B8CF2B2FB8C4690007FA96 /* DesignSystem */; };
-		18BA24132F7ED0D700C4F68B /* VivaDictaWatch Watch App.app in Embed Watch Content */ = {isa = PBXBuildFile; fileRef = 18BA23F32F7ED0D500C4F68B /* VivaDictaWatch Watch App.app */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
 		18BA29262F7F29FD00C4F68B /* WidgetKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 18E1C7FB2E8E793E00BE8A11 /* WidgetKit.framework */; };
 		18BA29272F7F29FD00C4F68B /* SwiftUI.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 18E1C7FD2E8E793E00BE8A11 /* SwiftUI.framework */; };
 		18BA29362F7F29FE00C4F68B /* VivaDictaWatchWidgetExtension.appex in Embed Foundation Extensions */ = {isa = PBXBuildFile; fileRef = 18BA29252F7F29FD00C4F68B /* VivaDictaWatchWidgetExtension.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
+		18BA24132F7ED0D700C4F68B /* VivaDictaWatch Watch App.app in Embed Watch Content */ = {isa = PBXBuildFile; fileRef = 18BA23F32F7ED0D500C4F68B /* VivaDictaWatch Watch App.app */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
 		18C7D0922FEB07530041C086 /* LocalLLM in Frameworks */ = {isa = PBXBuildFile; productRef = 18C7D0912FEB07530041C086 /* LocalLLM */; };
 		18C7D0942FEB0BCF0041C086 /* LocalLLM in Frameworks */ = {isa = PBXBuildFile; productRef = 18C7D0932FEB0BCF0041C086 /* LocalLLM */; };
 		18C7D0962FEB0BCF0041C086 /* LocalLLMMocks in Frameworks */ = {isa = PBXBuildFile; productRef = 18C7D0952FEB0BCF0041C086 /* LocalLLMMocks */; };
@@ -98,13 +98,6 @@
 			remoteInfo = ActionExtension;
 		};
 		18BA24002F7ED0D700C4F68B /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 181D04CF2E3E55E400D357A6 /* Project object */;
-			proxyType = 1;
-			remoteGlobalIDString = 18BA23F22F7ED0D500C4F68B;
-			remoteInfo = "VivaDictaWatch Watch App";
-		};
-		18BA24112F7ED0D700C4F68B /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 181D04CF2E3E55E400D357A6 /* Project object */;
 			proxyType = 1;
@@ -642,6 +635,7 @@
 				18BA29282F7F29FD00C4F68B /* VivaDictaWatchWidget */,
 				180E1D682E4A994800AE33B1 /* Frameworks */,
 				181D04D82E3E55E400D357A6 /* Products */,
+				EBADA72A3095A83E00A1BC7B /* Recovered References */,
 			);
 			sourceTree = "<group>";
 		};
@@ -687,6 +681,17 @@
 			children = (
 			);
 			name = Products;
+			sourceTree = "<group>";
+		};
+		EBADA72A3095A83E00A1BC7B /* Recovered References */ = {
+			isa = PBXGroup;
+			children = (
+				18F784FD2FB872A200280269 /* TTSKitExample.xcodeproj */,
+				18F7C9CB2FB872CB00280269 /* WhisperAX.xcodeproj */,
+				18F7C9AB2FB872CB00280269 /* TTSKitExample.xcodeproj */,
+				18F7851D2FB872A200280269 /* WhisperAX.xcodeproj */,
+			);
+			name = "Recovered References";
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -1004,6 +1009,7 @@
 			knownRegions = (
 				en,
 				Base,
+				"zh-Hans",
 			);
 			mainGroup = 181D04CE2E3E55E400D357A6;
 			minimizedProjectReferenceProxies = 1;
@@ -1198,15 +1204,15 @@
 			target = 189C7AAD2F0D84E2004BAFBF /* ActionExtension */;
 			targetProxy = 189C7ABA2F0D84E2004BAFBF /* PBXContainerItemProxy */;
 		};
-		18BA24012F7ED0D700C4F68B /* PBXTargetDependency */ = {
+		18BA24112F7ED0D700C4F68B /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			target = 18BA23F22F7ED0D500C4F68B /* VivaDictaWatch Watch App */;
 			targetProxy = 18BA24002F7ED0D700C4F68B /* PBXContainerItemProxy */;
 		};
-		18BA24122F7ED0D700C4F68B /* PBXTargetDependency */ = {
+		18BA24012F7ED0D700C4F68B /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			target = 18BA23F22F7ED0D500C4F68B /* VivaDictaWatch Watch App */;
-			targetProxy = 18BA24112F7ED0D700C4F68B /* PBXContainerItemProxy */;
+			targetProxy = 18BA24002F7ED0D700C4F68B /* PBXContainerItemProxy */;
 		};
 		18BA29352F7F29FE00C4F68B /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
@@ -1263,7 +1269,7 @@
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
 				COPY_PHASE_STRIP = NO;
 				DEBUG_INFORMATION_FORMAT = dwarf;
-				DEVELOPMENT_TEAM = TDX2FNZ56U;
+				DEVELOPMENT_TEAM = 862R2U6R9D;
 				EAGER_LINKING = YES;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				ENABLE_TESTABILITY = YES;
@@ -1332,7 +1338,7 @@
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
 				COPY_PHASE_STRIP = NO;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
-				DEVELOPMENT_TEAM = TDX2FNZ56U;
+				DEVELOPMENT_TEAM = 862R2U6R9D;
 				ENABLE_NS_ASSERTIONS = NO;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				ENABLE_USER_SCRIPT_SANDBOXING = YES;
@@ -1366,7 +1372,7 @@
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 3027;
 				DEBUG_INFORMATION_FORMAT = dwarf;
-				DEVELOPMENT_TEAM = 358V8FBM3U;
+				DEVELOPMENT_TEAM = 862R2U6R9D;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = VivaDicta/Info.plist;
@@ -1386,7 +1392,7 @@
 				);
 				MARKETING_VERSION = 3.12.2;
 				OTHER_LDFLAGS = "-ObjC";
-				PRODUCT_BUNDLE_IDENTIFIER = "com.antonnovoselov.VivaDicta-beta";
+				PRODUCT_BUNDLE_IDENTIFIER = "com.songqh.vivadictatest-beta";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				STRING_CATALOG_GENERATE_SYMBOLS = YES;
 				SWIFT_APPROACHABLE_CONCURRENCY = YES;
@@ -1409,7 +1415,7 @@
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 3027;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
-				DEVELOPMENT_TEAM = 358V8FBM3U;
+				DEVELOPMENT_TEAM = 862R2U6R9D;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = VivaDicta/Info.plist;
@@ -1429,7 +1435,7 @@
 				);
 				MARKETING_VERSION = 3.12.2;
 				OTHER_LDFLAGS = "-ObjC";
-				PRODUCT_BUNDLE_IDENTIFIER = com.antonnovoselov.VivaDicta;
+				PRODUCT_BUNDLE_IDENTIFIER = com.songqh.vivadictatest;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				STRING_CATALOG_GENERATE_SYMBOLS = YES;
 				SWIFT_APPROACHABLE_CONCURRENCY = YES;
@@ -1449,11 +1455,11 @@
 				BUNDLE_LOADER = "$(TEST_HOST)";
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 3027;
-				DEVELOPMENT_TEAM = 358V8FBM3U;
+				DEVELOPMENT_TEAM = 862R2U6R9D;
 				GENERATE_INFOPLIST_FILE = YES;
 				IPHONEOS_DEPLOYMENT_TARGET = 18.0;
 				MARKETING_VERSION = 3.12.2;
-				PRODUCT_BUNDLE_IDENTIFIER = com.antonnovoselov.VivaDictaTests;
+				PRODUCT_BUNDLE_IDENTIFIER = com.songqh.vivadictatestTests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				STRING_CATALOG_GENERATE_SYMBOLS = NO;
 				SWIFT_APPROACHABLE_CONCURRENCY = YES;
@@ -1475,11 +1481,11 @@
 				BUNDLE_LOADER = "$(TEST_HOST)";
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 3027;
-				DEVELOPMENT_TEAM = 358V8FBM3U;
+				DEVELOPMENT_TEAM = 862R2U6R9D;
 				GENERATE_INFOPLIST_FILE = YES;
 				IPHONEOS_DEPLOYMENT_TARGET = 18.0;
 				MARKETING_VERSION = 3.12.2;
-				PRODUCT_BUNDLE_IDENTIFIER = com.antonnovoselov.VivaDictaTests;
+				PRODUCT_BUNDLE_IDENTIFIER = com.songqh.vivadictatestTests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				STRING_CATALOG_GENERATE_SYMBOLS = NO;
 				SWIFT_APPROACHABLE_CONCURRENCY = YES;
@@ -1501,7 +1507,7 @@
 				CODE_SIGN_ENTITLEMENTS = ShareExtension/ShareExtension.entitlements;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 3027;
-				DEVELOPMENT_TEAM = 358V8FBM3U;
+				DEVELOPMENT_TEAM = 862R2U6R9D;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = ShareExtension/Info.plist;
 				INFOPLIST_KEY_CFBundleDisplayName = ShareExtension;
@@ -1513,7 +1519,7 @@
 					"@executable_path/../../Frameworks",
 				);
 				MARKETING_VERSION = 3.12.2;
-				PRODUCT_BUNDLE_IDENTIFIER = "com.antonnovoselov.VivaDicta-beta.ShareExtension";
+				PRODUCT_BUNDLE_IDENTIFIER = "com.songqh.vivadictatest-beta.ShareExtension";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;
 				STRING_CATALOG_GENERATE_SYMBOLS = YES;
@@ -1531,7 +1537,7 @@
 				CODE_SIGN_ENTITLEMENTS = ShareExtension/ShareExtension.entitlements;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 3027;
-				DEVELOPMENT_TEAM = 358V8FBM3U;
+				DEVELOPMENT_TEAM = 862R2U6R9D;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = ShareExtension/Info.plist;
 				INFOPLIST_KEY_CFBundleDisplayName = ShareExtension;
@@ -1543,7 +1549,7 @@
 					"@executable_path/../../Frameworks",
 				);
 				MARKETING_VERSION = 3.12.2;
-				PRODUCT_BUNDLE_IDENTIFIER = com.antonnovoselov.VivaDicta.ShareExtension;
+				PRODUCT_BUNDLE_IDENTIFIER = com.songqh.vivadictatest.ShareExtension;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;
 				STRING_CATALOG_GENERATE_SYMBOLS = YES;
@@ -1561,7 +1567,7 @@
 				CODE_SIGN_ENTITLEMENTS = ActionExtension/ActionExtension.entitlements;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 3027;
-				DEVELOPMENT_TEAM = 358V8FBM3U;
+				DEVELOPMENT_TEAM = 862R2U6R9D;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = ActionExtension/Info.plist;
 				INFOPLIST_KEY_CFBundleDisplayName = "Transcribe with VivaDicta";
@@ -1573,7 +1579,7 @@
 					"@executable_path/../../Frameworks",
 				);
 				MARKETING_VERSION = 3.12.2;
-				PRODUCT_BUNDLE_IDENTIFIER = "com.antonnovoselov.VivaDicta-beta.ActionExtension";
+				PRODUCT_BUNDLE_IDENTIFIER = "com.songqh.vivadictatest-beta.ActionExtension";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;
 				STRING_CATALOG_GENERATE_SYMBOLS = YES;
@@ -1591,7 +1597,7 @@
 				CODE_SIGN_ENTITLEMENTS = ActionExtension/ActionExtension.entitlements;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 3027;
-				DEVELOPMENT_TEAM = 358V8FBM3U;
+				DEVELOPMENT_TEAM = 862R2U6R9D;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = ActionExtension/Info.plist;
 				INFOPLIST_KEY_CFBundleDisplayName = "Transcribe with VivaDicta";
@@ -1603,7 +1609,7 @@
 					"@executable_path/../../Frameworks",
 				);
 				MARKETING_VERSION = 3.12.2;
-				PRODUCT_BUNDLE_IDENTIFIER = com.antonnovoselov.VivaDicta.ActionExtension;
+				PRODUCT_BUNDLE_IDENTIFIER = com.songqh.vivadictatest.ActionExtension;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;
 				STRING_CATALOG_GENERATE_SYMBOLS = YES;
@@ -1652,7 +1658,7 @@
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
 				COPY_PHASE_STRIP = NO;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
-				DEVELOPMENT_TEAM = TDX2FNZ56U;
+				DEVELOPMENT_TEAM = 862R2U6R9D;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				ENABLE_TESTABILITY = YES;
 				ENABLE_USER_SCRIPT_SANDBOXING = YES;
@@ -1692,7 +1698,7 @@
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 3027;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
-				DEVELOPMENT_TEAM = 358V8FBM3U;
+				DEVELOPMENT_TEAM = 862R2U6R9D;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = VivaDicta/Info.plist;
@@ -1712,7 +1718,7 @@
 				);
 				MARKETING_VERSION = 3.12.2;
 				OTHER_LDFLAGS = "-ObjC";
-				PRODUCT_BUNDLE_IDENTIFIER = com.antonnovoselov.VivaDicta;
+				PRODUCT_BUNDLE_IDENTIFIER = com.songqh.vivadictatest;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				STRING_CATALOG_GENERATE_SYMBOLS = YES;
 				SWIFT_APPROACHABLE_CONCURRENCY = YES;
@@ -1732,11 +1738,11 @@
 				BUNDLE_LOADER = "$(TEST_HOST)";
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 3027;
-				DEVELOPMENT_TEAM = 358V8FBM3U;
+				DEVELOPMENT_TEAM = 862R2U6R9D;
 				GENERATE_INFOPLIST_FILE = YES;
 				IPHONEOS_DEPLOYMENT_TARGET = 18.0;
 				MARKETING_VERSION = 3.12.2;
-				PRODUCT_BUNDLE_IDENTIFIER = com.antonnovoselov.VivaDictaTests;
+				PRODUCT_BUNDLE_IDENTIFIER = com.songqh.vivadictatestTests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				STRING_CATALOG_GENERATE_SYMBOLS = NO;
 				SWIFT_APPROACHABLE_CONCURRENCY = YES;
@@ -1758,7 +1764,7 @@
 				CODE_SIGN_ENTITLEMENTS = VivaDictaKeyboard/VivaDictaKeyboard.entitlements;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 3027;
-				DEVELOPMENT_TEAM = 358V8FBM3U;
+				DEVELOPMENT_TEAM = 862R2U6R9D;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = VivaDictaKeyboard/Info.plist;
 				INFOPLIST_KEY_CFBundleDisplayName = VivaDicta;
@@ -1770,7 +1776,7 @@
 					"@executable_path/../../Frameworks",
 				);
 				MARKETING_VERSION = 3.12.2;
-				PRODUCT_BUNDLE_IDENTIFIER = com.antonnovoselov.VivaDicta.VivaDictaKeyboard;
+				PRODUCT_BUNDLE_IDENTIFIER = com.songqh.vivadictatest.VivaDictaKeyboard;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;
 				STRING_CATALOG_GENERATE_SYMBOLS = YES;
@@ -1791,7 +1797,7 @@
 				ASSETCATALOG_COMPILER_WIDGET_BACKGROUND_COLOR_NAME = WidgetBackground;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 3027;
-				DEVELOPMENT_TEAM = 358V8FBM3U;
+				DEVELOPMENT_TEAM = 862R2U6R9D;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = VivaDictaWidget/Info.plist;
 				INFOPLIST_KEY_CFBundleDisplayName = VivaDictaWidget;
@@ -1803,7 +1809,7 @@
 					"@executable_path/../../Frameworks",
 				);
 				MARKETING_VERSION = 3.12.2;
-				PRODUCT_BUNDLE_IDENTIFIER = com.antonnovoselov.VivaDicta.VivaDictaWidget;
+				PRODUCT_BUNDLE_IDENTIFIER = com.songqh.vivadictatest.VivaDictaWidget;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;
 				STRING_CATALOG_GENERATE_SYMBOLS = YES;
@@ -1825,7 +1831,7 @@
 				CODE_SIGN_ENTITLEMENTS = ShareExtension/ShareExtension.entitlements;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 3027;
-				DEVELOPMENT_TEAM = 358V8FBM3U;
+				DEVELOPMENT_TEAM = 862R2U6R9D;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = ShareExtension/Info.plist;
 				INFOPLIST_KEY_CFBundleDisplayName = ShareExtension;
@@ -1837,7 +1843,7 @@
 					"@executable_path/../../Frameworks",
 				);
 				MARKETING_VERSION = 3.12.2;
-				PRODUCT_BUNDLE_IDENTIFIER = com.antonnovoselov.VivaDicta.ShareExtension;
+				PRODUCT_BUNDLE_IDENTIFIER = com.songqh.vivadictatest.ShareExtension;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;
 				STRING_CATALOG_GENERATE_SYMBOLS = YES;
@@ -1855,7 +1861,7 @@
 				CODE_SIGN_ENTITLEMENTS = ActionExtension/ActionExtension.entitlements;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 3027;
-				DEVELOPMENT_TEAM = 358V8FBM3U;
+				DEVELOPMENT_TEAM = 862R2U6R9D;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = ActionExtension/Info.plist;
 				INFOPLIST_KEY_CFBundleDisplayName = "Transcribe with VivaDicta";
@@ -1867,7 +1873,7 @@
 					"@executable_path/../../Frameworks",
 				);
 				MARKETING_VERSION = 3.12.2;
-				PRODUCT_BUNDLE_IDENTIFIER = com.antonnovoselov.VivaDicta.ActionExtension;
+				PRODUCT_BUNDLE_IDENTIFIER = com.songqh.vivadictatest.ActionExtension;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;
 				STRING_CATALOG_GENERATE_SYMBOLS = YES;
@@ -1886,20 +1892,20 @@
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 3027;
-				DEVELOPMENT_TEAM = 358V8FBM3U;
+				DEVELOPMENT_TEAM = 862R2U6R9D;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = "VivaDictaWatch Watch App/Info.plist";
 				INFOPLIST_KEY_CFBundleDisplayName = VivaDicta;
 				INFOPLIST_KEY_NSMicrophoneUsageDescription = "VivaDicta records audio on your Apple Watch and sends it to your iPhone for transcription.";
 				INFOPLIST_KEY_UISupportedInterfaceOrientations = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown";
-				INFOPLIST_KEY_WKCompanionAppBundleIdentifier = "com.antonnovoselov.VivaDicta-beta";
+				INFOPLIST_KEY_WKCompanionAppBundleIdentifier = "com.songqh.vivadictatest-beta";
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
 				MARKETING_VERSION = 3.12.2;
-				PRODUCT_BUNDLE_IDENTIFIER = "com.antonnovoselov.VivaDicta-beta.watchkitapp";
+				PRODUCT_BUNDLE_IDENTIFIER = "com.songqh.vivadictatest-beta.watchkitapp";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = watchos;
 				SKIP_INSTALL = YES;
@@ -1923,20 +1929,20 @@
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 3027;
-				DEVELOPMENT_TEAM = 358V8FBM3U;
+				DEVELOPMENT_TEAM = 862R2U6R9D;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = "VivaDictaWatch Watch App/Info.plist";
 				INFOPLIST_KEY_CFBundleDisplayName = VivaDicta;
 				INFOPLIST_KEY_NSMicrophoneUsageDescription = "VivaDicta records audio on your Apple Watch and sends it to your iPhone for transcription.";
 				INFOPLIST_KEY_UISupportedInterfaceOrientations = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown";
-				INFOPLIST_KEY_WKCompanionAppBundleIdentifier = com.antonnovoselov.VivaDicta;
+				INFOPLIST_KEY_WKCompanionAppBundleIdentifier = com.songqh.vivadictatest;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
 				MARKETING_VERSION = 3.12.2;
-				PRODUCT_BUNDLE_IDENTIFIER = com.antonnovoselov.VivaDicta.watchkitapp;
+				PRODUCT_BUNDLE_IDENTIFIER = com.songqh.vivadictatest.watchkitapp;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = watchos;
 				SKIP_INSTALL = YES;
@@ -1959,20 +1965,20 @@
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 3027;
-				DEVELOPMENT_TEAM = 358V8FBM3U;
+				DEVELOPMENT_TEAM = 862R2U6R9D;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = "VivaDictaWatch Watch App/Info.plist";
 				INFOPLIST_KEY_CFBundleDisplayName = VivaDicta;
 				INFOPLIST_KEY_NSMicrophoneUsageDescription = "VivaDicta records audio on your Apple Watch and sends it to your iPhone for transcription.";
 				INFOPLIST_KEY_UISupportedInterfaceOrientations = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown";
-				INFOPLIST_KEY_WKCompanionAppBundleIdentifier = com.antonnovoselov.VivaDicta;
+				INFOPLIST_KEY_WKCompanionAppBundleIdentifier = com.songqh.vivadictatest;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
 				MARKETING_VERSION = 3.12.2;
-				PRODUCT_BUNDLE_IDENTIFIER = com.antonnovoselov.VivaDicta.watchkitapp;
+				PRODUCT_BUNDLE_IDENTIFIER = com.songqh.vivadictatest.watchkitapp;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = watchos;
 				SKIP_INSTALL = YES;
@@ -1994,10 +2000,10 @@
 				BUNDLE_LOADER = "$(TEST_HOST)";
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 3027;
-				DEVELOPMENT_TEAM = 358V8FBM3U;
+				DEVELOPMENT_TEAM = 862R2U6R9D;
 				GENERATE_INFOPLIST_FILE = YES;
 				MARKETING_VERSION = 3.12.2;
-				PRODUCT_BUNDLE_IDENTIFIER = "com.antonnovoselov.VivaDictaWatch-Watch-AppTests";
+				PRODUCT_BUNDLE_IDENTIFIER = com.songqh.vivadictatest.watchtests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = watchos;
 				STRING_CATALOG_GENERATE_SYMBOLS = NO;
@@ -2018,10 +2024,10 @@
 				BUNDLE_LOADER = "$(TEST_HOST)";
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 3027;
-				DEVELOPMENT_TEAM = 358V8FBM3U;
+				DEVELOPMENT_TEAM = 862R2U6R9D;
 				GENERATE_INFOPLIST_FILE = YES;
 				MARKETING_VERSION = 3.12.2;
-				PRODUCT_BUNDLE_IDENTIFIER = "com.antonnovoselov.VivaDictaWatch-Watch-AppTests";
+				PRODUCT_BUNDLE_IDENTIFIER = com.songqh.vivadictatest.watchtests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = watchos;
 				STRING_CATALOG_GENERATE_SYMBOLS = NO;
@@ -2041,10 +2047,10 @@
 				BUNDLE_LOADER = "$(TEST_HOST)";
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 3027;
-				DEVELOPMENT_TEAM = 358V8FBM3U;
+				DEVELOPMENT_TEAM = 862R2U6R9D;
 				GENERATE_INFOPLIST_FILE = YES;
 				MARKETING_VERSION = 3.12.2;
-				PRODUCT_BUNDLE_IDENTIFIER = "com.antonnovoselov.VivaDictaWatch-Watch-AppTests";
+				PRODUCT_BUNDLE_IDENTIFIER = com.songqh.vivadictatest.watchtests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = watchos;
 				STRING_CATALOG_GENERATE_SYMBOLS = NO;
@@ -2065,7 +2071,7 @@
 				ASSETCATALOG_COMPILER_WIDGET_BACKGROUND_COLOR_NAME = WidgetBackground;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 3027;
-				DEVELOPMENT_TEAM = 358V8FBM3U;
+				DEVELOPMENT_TEAM = 862R2U6R9D;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = VivaDictaWatchWidget/Info.plist;
 				INFOPLIST_KEY_CFBundleDisplayName = VivaDictaWatchWidget;
@@ -2077,7 +2083,7 @@
 					"@executable_path/../../../../Frameworks",
 				);
 				MARKETING_VERSION = 3.12.2;
-				PRODUCT_BUNDLE_IDENTIFIER = "com.antonnovoselov.VivaDicta-beta.watchkitapp.VivaDictaWatchWidget";
+				PRODUCT_BUNDLE_IDENTIFIER = "com.songqh.vivadictatest-beta.watchkitapp.VivaDictaWatchWidget";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = watchos;
 				SKIP_INSTALL = YES;
@@ -2099,7 +2105,7 @@
 				ASSETCATALOG_COMPILER_WIDGET_BACKGROUND_COLOR_NAME = WidgetBackground;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 3027;
-				DEVELOPMENT_TEAM = 358V8FBM3U;
+				DEVELOPMENT_TEAM = 862R2U6R9D;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = VivaDictaWatchWidget/Info.plist;
 				INFOPLIST_KEY_CFBundleDisplayName = VivaDictaWatchWidget;
@@ -2111,7 +2117,7 @@
 					"@executable_path/../../../../Frameworks",
 				);
 				MARKETING_VERSION = 3.12.2;
-				PRODUCT_BUNDLE_IDENTIFIER = com.antonnovoselov.VivaDicta.watchkitapp.VivaDictaWatchWidget;
+				PRODUCT_BUNDLE_IDENTIFIER = com.songqh.vivadictatest.watchkitapp.VivaDictaWatchWidget;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = watchos;
 				SKIP_INSTALL = YES;
@@ -2132,7 +2138,7 @@
 				ASSETCATALOG_COMPILER_WIDGET_BACKGROUND_COLOR_NAME = WidgetBackground;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 3027;
-				DEVELOPMENT_TEAM = 358V8FBM3U;
+				DEVELOPMENT_TEAM = 862R2U6R9D;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = VivaDictaWatchWidget/Info.plist;
 				INFOPLIST_KEY_CFBundleDisplayName = VivaDictaWatchWidget;
@@ -2144,7 +2150,7 @@
 					"@executable_path/../../../../Frameworks",
 				);
 				MARKETING_VERSION = 3.12.2;
-				PRODUCT_BUNDLE_IDENTIFIER = com.antonnovoselov.VivaDicta.watchkitapp.VivaDictaWatchWidget;
+				PRODUCT_BUNDLE_IDENTIFIER = com.songqh.vivadictatest.watchkitapp.VivaDictaWatchWidget;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = watchos;
 				SKIP_INSTALL = YES;
@@ -2164,7 +2170,7 @@
 				CODE_SIGN_ENTITLEMENTS = VivaDictaKeyboard/VivaDictaKeyboard.entitlements;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 3027;
-				DEVELOPMENT_TEAM = 358V8FBM3U;
+				DEVELOPMENT_TEAM = 862R2U6R9D;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = VivaDictaKeyboard/Info.plist;
 				INFOPLIST_KEY_CFBundleDisplayName = VivaDicta;
@@ -2176,7 +2182,7 @@
 					"@executable_path/../../Frameworks",
 				);
 				MARKETING_VERSION = 3.12.2;
-				PRODUCT_BUNDLE_IDENTIFIER = "com.antonnovoselov.VivaDicta-beta.VivaDictaKeyboard";
+				PRODUCT_BUNDLE_IDENTIFIER = "com.songqh.vivadictatest-beta.VivaDictaKeyboard";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;
 				STRING_CATALOG_GENERATE_SYMBOLS = YES;
@@ -2196,7 +2202,7 @@
 				CODE_SIGN_ENTITLEMENTS = VivaDictaKeyboard/VivaDictaKeyboard.entitlements;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 3027;
-				DEVELOPMENT_TEAM = 358V8FBM3U;
+				DEVELOPMENT_TEAM = 862R2U6R9D;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = VivaDictaKeyboard/Info.plist;
 				INFOPLIST_KEY_CFBundleDisplayName = VivaDicta;
@@ -2208,7 +2214,7 @@
 					"@executable_path/../../Frameworks",
 				);
 				MARKETING_VERSION = 3.12.2;
-				PRODUCT_BUNDLE_IDENTIFIER = com.antonnovoselov.VivaDicta.VivaDictaKeyboard;
+				PRODUCT_BUNDLE_IDENTIFIER = com.songqh.vivadictatest.VivaDictaKeyboard;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;
 				STRING_CATALOG_GENERATE_SYMBOLS = YES;
@@ -2229,7 +2235,7 @@
 				ASSETCATALOG_COMPILER_WIDGET_BACKGROUND_COLOR_NAME = WidgetBackground;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 3027;
-				DEVELOPMENT_TEAM = 358V8FBM3U;
+				DEVELOPMENT_TEAM = 862R2U6R9D;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = VivaDictaWidget/Info.plist;
 				INFOPLIST_KEY_CFBundleDisplayName = VivaDictaWidget;
@@ -2241,7 +2247,7 @@
 					"@executable_path/../../Frameworks",
 				);
 				MARKETING_VERSION = 3.12.2;
-				PRODUCT_BUNDLE_IDENTIFIER = "com.antonnovoselov.VivaDicta-beta.VivaDictaWidget";
+				PRODUCT_BUNDLE_IDENTIFIER = "com.songqh.vivadictatest-beta.VivaDictaWidget";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;
 				STRING_CATALOG_GENERATE_SYMBOLS = YES;
@@ -2264,7 +2270,7 @@
 				ASSETCATALOG_COMPILER_WIDGET_BACKGROUND_COLOR_NAME = WidgetBackground;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 3027;
-				DEVELOPMENT_TEAM = 358V8FBM3U;
+				DEVELOPMENT_TEAM = 862R2U6R9D;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = VivaDictaWidget/Info.plist;
 				INFOPLIST_KEY_CFBundleDisplayName = VivaDictaWidget;
@@ -2276,7 +2282,7 @@
 					"@executable_path/../../Frameworks",
 				);
 				MARKETING_VERSION = 3.12.2;
-				PRODUCT_BUNDLE_IDENTIFIER = com.antonnovoselov.VivaDicta.VivaDictaWidget;
+				PRODUCT_BUNDLE_IDENTIFIER = com.songqh.vivadictatest.VivaDictaWidget;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;
 				STRING_CATALOG_GENERATE_SYMBOLS = YES;

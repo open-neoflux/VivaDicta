@@ -78,66 +78,66 @@ enum LiveTranslationLanguage: String, CaseIterable, Identifiable, Sendable {
 
     var displayName: String {
         switch self {
-        case .afrikaans: "Afrikaans"
-        case .albanian: "Albanian"
-        case .arabic: "Arabic"
-        case .azerbaijani: "Azerbaijani"
-        case .basque: "Basque"
-        case .belarusian: "Belarusian"
-        case .bengali: "Bengali"
-        case .bosnian: "Bosnian"
-        case .bulgarian: "Bulgarian"
-        case .catalan: "Catalan"
-        case .chinese: "Chinese"
-        case .croatian: "Croatian"
-        case .czech: "Czech"
-        case .danish: "Danish"
-        case .dutch: "Dutch"
-        case .english: "English"
-        case .estonian: "Estonian"
-        case .finnish: "Finnish"
-        case .french: "French"
-        case .galician: "Galician"
-        case .german: "German"
-        case .greek: "Greek"
-        case .gujarati: "Gujarati"
-        case .hebrew: "Hebrew"
-        case .hindi: "Hindi"
-        case .hungarian: "Hungarian"
-        case .indonesian: "Indonesian"
-        case .italian: "Italian"
-        case .japanese: "Japanese"
-        case .kannada: "Kannada"
-        case .kazakh: "Kazakh"
-        case .korean: "Korean"
-        case .latvian: "Latvian"
-        case .lithuanian: "Lithuanian"
-        case .macedonian: "Macedonian"
-        case .malay: "Malay"
-        case .malayalam: "Malayalam"
-        case .marathi: "Marathi"
-        case .norwegian: "Norwegian"
-        case .persian: "Persian"
-        case .polish: "Polish"
-        case .portuguese: "Portuguese"
-        case .punjabi: "Punjabi"
-        case .romanian: "Romanian"
-        case .russian: "Russian"
-        case .serbian: "Serbian"
-        case .slovak: "Slovak"
-        case .slovenian: "Slovenian"
-        case .spanish: "Spanish"
-        case .swahili: "Swahili"
-        case .swedish: "Swedish"
-        case .tagalog: "Tagalog"
-        case .tamil: "Tamil"
-        case .telugu: "Telugu"
-        case .thai: "Thai"
-        case .turkish: "Turkish"
-        case .ukrainian: "Ukrainian"
-        case .urdu: "Urdu"
-        case .vietnamese: "Vietnamese"
-        case .welsh: "Welsh"
+        case .afrikaans: String(localized: "Afrikaans")
+        case .albanian: String(localized: "Albanian")
+        case .arabic: String(localized: "Arabic")
+        case .azerbaijani: String(localized: "Azerbaijani")
+        case .basque: String(localized: "Basque")
+        case .belarusian: String(localized: "Belarusian")
+        case .bengali: String(localized: "Bengali")
+        case .bosnian: String(localized: "Bosnian")
+        case .bulgarian: String(localized: "Bulgarian")
+        case .catalan: String(localized: "Catalan")
+        case .chinese: String(localized: "Chinese")
+        case .croatian: String(localized: "Croatian")
+        case .czech: String(localized: "Czech")
+        case .danish: String(localized: "Danish")
+        case .dutch: String(localized: "Dutch")
+        case .english: String(localized: "English")
+        case .estonian: String(localized: "Estonian")
+        case .finnish: String(localized: "Finnish")
+        case .french: String(localized: "French")
+        case .galician: String(localized: "Galician")
+        case .german: String(localized: "German")
+        case .greek: String(localized: "Greek")
+        case .gujarati: String(localized: "Gujarati")
+        case .hebrew: String(localized: "Hebrew")
+        case .hindi: String(localized: "Hindi")
+        case .hungarian: String(localized: "Hungarian")
+        case .indonesian: String(localized: "Indonesian")
+        case .italian: String(localized: "Italian")
+        case .japanese: String(localized: "Japanese")
+        case .kannada: String(localized: "Kannada")
+        case .kazakh: String(localized: "Kazakh")
+        case .korean: String(localized: "Korean")
+        case .latvian: String(localized: "Latvian")
+        case .lithuanian: String(localized: "Lithuanian")
+        case .macedonian: String(localized: "Macedonian")
+        case .malay: String(localized: "Malay")
+        case .malayalam: String(localized: "Malayalam")
+        case .marathi: String(localized: "Marathi")
+        case .norwegian: String(localized: "Norwegian")
+        case .persian: String(localized: "Persian")
+        case .polish: String(localized: "Polish")
+        case .portuguese: String(localized: "Portuguese")
+        case .punjabi: String(localized: "Punjabi")
+        case .romanian: String(localized: "Romanian")
+        case .russian: String(localized: "Russian")
+        case .serbian: String(localized: "Serbian")
+        case .slovak: String(localized: "Slovak")
+        case .slovenian: String(localized: "Slovenian")
+        case .spanish: String(localized: "Spanish")
+        case .swahili: String(localized: "Swahili")
+        case .swedish: String(localized: "Swedish")
+        case .tagalog: String(localized: "Tagalog")
+        case .tamil: String(localized: "Tamil")
+        case .telugu: String(localized: "Telugu")
+        case .thai: String(localized: "Thai")
+        case .turkish: String(localized: "Turkish")
+        case .ukrainian: String(localized: "Ukrainian")
+        case .urdu: String(localized: "Urdu")
+        case .vietnamese: String(localized: "Vietnamese")
+        case .welsh: String(localized: "Welsh")
         }
     }
 

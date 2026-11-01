@@ -52,7 +52,7 @@ public final class AppGroupCoordinator: @unchecked Sendable {
 
     
     // MARK: - Constants
-    public let appGroupId = "group.com.antonnovoselov.VivaDicta"
+    public let appGroupId = "group.com.songqh.vivadictatest"
     // AI Processing configuration
     public static let vivaModesKey = "VivaModes"
     public static let selectedVivaModeKey = "selectedVivaMode"

@@ -21,7 +21,7 @@ struct ChatToolUsageBadgeRow: View {
             items.append(
                 ChatToolUsageBadge(
                     icon: "sparkle.magnifyingglass",
-                    accessibilityLabel: "Other notes searched",
+                    accessibilityLabel: String(localized: "Other notes searched"),
                     tint: .teal
                 )
             )
@@ -31,7 +31,7 @@ struct ChatToolUsageBadgeRow: View {
             items.append(
                 ChatToolUsageBadge(
                     icon: "globe",
-                    accessibilityLabel: "Web searched",
+                    accessibilityLabel: String(localized: "Web searched"),
                     tint: .blue
                 )
             )

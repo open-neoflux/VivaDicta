@@ -242,6 +242,8 @@ struct SettingsView: View {
                     }
                 }
 
+                // Keyboard settings hidden: the keyboard extension is not a product goal.
+                if false {
                 Section("Keyboard") {
                     Toggle(isOn: $isKeepInClipboardEnabled) {
                         VStack(alignment: .leading, spacing: 4) {
@@ -315,6 +317,7 @@ struct SettingsView: View {
                         isSessionActive: prewarmManager.isSessionActiveObservable,
                         action: toggleKeyboardRecordingSession
                     )
+                }
                 }
 
                 Section("Microphone") {
@@ -958,7 +961,7 @@ private struct ModeInfoRow: View {
 
     var body: some View {
         VStack(alignment: .leading, spacing: 6) {
-            Text(mode.name)
+            Text(mode.displayName)
                 .font(.body.weight(.medium))
 
             if !mode.transcriptionModel.isEmpty && isTranscriptionProviderAvailable {

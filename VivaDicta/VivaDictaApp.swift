@@ -50,7 +50,7 @@ struct VivaDictaApp: App {
             // AppGroupCoordinator.shared access, which would trigger the
             // singleton's init (registering observers, etc.) before state
             // is cleared.
-            let appGroupId = "group.com.antonnovoselov.VivaDicta"
+            let appGroupId = "group.com.songqh.vivadictatest"
             UserDefaults(suiteName: appGroupId)?
                 .removePersistentDomain(forName: appGroupId)
         }
@@ -78,15 +78,18 @@ struct VivaDictaApp: App {
 
         // Initialize Persistence
         let modelContainer: ModelContainer
-        let appGroupURL = FileManager.default.containerURL(forSecurityApplicationGroupIdentifier: AppGroupCoordinator.shared.appGroupId)!
-        let isICloudSyncEnabled = UserDefaults.standard.bool(forKey: UserDefaultsStorage.Keys.isICloudSyncEnabled)
+        // LOCAL-TEST: personal dev team lacks App Group + iCloud; use private container, local-only.
+        let appGroupURL = FileManager.default.containerURL(forSecurityApplicationGroupIdentifier: AppGroupCoordinator.shared.appGroupId)
+            ?? URL.applicationSupportDirectory
+        let isICloudSyncEnabled = false
 
         do {
+            try? FileManager.default.createDirectory(at: appGroupURL, withIntermediateDirectories: true)
             let sharedStoreURL = appGroupURL.appendingPathComponent("VivaDicta.sqlite")
             let config = ModelConfiguration(
                 url: sharedStoreURL,
                 cloudKitDatabase: isICloudSyncEnabled
-                    ? .private("iCloud.com.antonnovoselov.VivaDicta")
+                    ? .private("iCloud.com.songqh.vivadictatest")
                     : .none
             )
             modelContainer = try ModelContainer(

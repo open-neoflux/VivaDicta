@@ -203,7 +203,7 @@ struct LocalModelCard: View {
             }
 
             // Description
-            Text(model.description)
+            Text(String(localized: String.LocalizationValue(model.description)))
                 .font(.subheadline)
                 .foregroundStyle(.secondary)
         }

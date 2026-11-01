@@ -142,6 +142,61 @@ final class WatchAudioProcessor {
 
         } catch {
             logger.logError("⌚ [FAILED] Watch audio processing failed: \(error.localizedDescription)")
+            // Keep the recording: a watch note with no row is invisible to the
+            // user, and the audio would only resurface via the orphan scan.
+            await saveFailedTranscription(
+                audioURL: audioURL,
+                sourceTag: sourceTag,
+                recordingTimestamp: recordingTimestamp,
+                error: error
+            )
+        }
+    }
+
+    /// Persists a placeholder note for audio that could not be transcribed, so
+    /// the recording shows up in the list (marked failed) and can be played
+    /// back or retried instead of silently disappearing.
+    private func saveFailedTranscription(
+        audioURL: URL,
+        sourceTag: String,
+        recordingTimestamp: Date,
+        error: any Error
+    ) async {
+        let fileName = audioURL.lastPathComponent
+
+        // Never create a second row for the same file.
+        let probe = ModelContext(modelContainer)
+        var descriptor = FetchDescriptor<Transcription>(
+            predicate: #Predicate { $0.audioFileName == fileName }
+        )
+        descriptor.fetchLimit = 1
+        if let existing = try? probe.fetch(descriptor).first {
+            logger.logInfo("⌚ Failed-note skipped, row already exists: \(fileName) id=\(existing.id)")
+            return
+        }
+
+        let audioAsset = AVURLAsset(url: audioURL)
+        let audioDuration = (try? CMTimeGetSeconds(await audioAsset.load(.duration))) ?? 0.0
+
+        let context = ModelContext(modelContainer)
+        let transcription = Transcription(
+            text: "",
+            audioDuration: audioDuration,
+            audioFileName: fileName,
+            transcriptionModelName: transcriptionManager.getCurrentTranscriptionModel()?.displayName,
+            transcriptionProviderName: transcriptionManager.currentMode.transcriptionProvider.displayName,
+            powerModeId: aiService.selectedMode.id.uuidString,
+            sourceTag: sourceTag
+        )
+        transcription.timestamp = recordingTimestamp
+        transcription.transcriptionStatus = TranscriptionStatus.failed.rawValue
+        context.insert(transcription)
+
+        do {
+            try context.save()
+            logger.logInfo("⌚ Saved failed-transcription note for \(fileName) so the audio stays reachable (reason: \(error.localizedDescription))")
+        } catch {
+            logger.logError("⌚ Could not save failed-transcription note for \(fileName): \(error.localizedDescription)")
         }
     }
 

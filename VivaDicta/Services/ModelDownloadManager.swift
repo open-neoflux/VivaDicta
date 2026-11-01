@@ -5,6 +5,7 @@
 //  Created by Anton Novoselov on 2025.09.02
 //
 
+import AppGroup
 import LocalTranscription
 import SwiftUI
 import TranscriptionCore
@@ -71,6 +72,14 @@ enum DownloadStatus: String {
 /// ```
 @Observable
 class ModelDownloadManager {
+    /// Which host WhisperKit downloads from. Users in mainland China usually
+    /// cannot reach huggingface.co at all, so the mirror is selectable in
+    /// Settings → Models.
+    static var configuredModelHost: LocalModelDownloader.ModelHost {
+        let raw = UserDefaults.standard.string(forKey: UserDefaultsStorage.Keys.modelDownloadHost)
+        return LocalModelDownloader.ModelHost(rawValue: raw ?? "") ?? .huggingFace
+    }
+
     /// Download progress per model (0.0 to 1.0), keyed by model name.
     public var downloadProgress: [String: Double] = [:]
 
@@ -269,6 +278,7 @@ class ModelDownloadManager {
         do {
             try await LocalModelDownloader.downloadAndPrepareWhisperKit(
                 modelName: whisperKitModelName,
+                host: Self.configuredModelHost,
                 onPhase: { [weak self] phase in
                     Task { @MainActor in
                         guard let self else { return }

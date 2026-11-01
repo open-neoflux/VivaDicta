@@ -32,7 +32,7 @@ struct ChatView: View {
     @State private var showClearConfirmation = false
     @State private var selectedTranscription: Transcription?
     @Environment(\.colorScheme) private var colorScheme
-    @AppStorage(SmartSearchFeature.isEnabledKey) private var isSmartSearchEnabled = true
+    @AppStorage(SmartSearchFeature.isEnabledKey) private var isSmartSearchEnabled = false
     @Query(sort: \Transcription.timestamp, order: .reverse)
     private var allTranscriptions: [Transcription]
 

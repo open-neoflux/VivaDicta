@@ -44,7 +44,20 @@ struct VivaMode: Identifiable, Hashable, Codable {
     let id: UUID
 
     /// User-visible name for the mode.
+    ///
+    /// Stored verbatim (UserDefaults + CloudKit); built-in modes keep their
+    /// English identifier so existing records keep matching. Use
+    /// ``displayName`` anywhere the name is shown to the user.
     let name: String
+
+    /// Localized name for UI. Built-in modes are matched by their stored
+    /// English name; user-created modes pass through unchanged.
+    var displayName: String {
+        switch name {
+        case "Default": String(localized: "Default")
+        default: name
+        }
+    }
 
     /// The transcription provider to use (WhisperKit, Parakeet, or cloud service).
     let transcriptionProvider: TranscriptionModelProvider

@@ -215,6 +215,13 @@ struct OnboardingPrivacyCard: View {
     let title: String
     let description: String
 
+    init(title: String, description: String) {
+        // Call sites pass literals; resolve them through the string catalog
+        // so the onboarding copy follows the app language.
+        self.title = String(localized: String.LocalizationValue(title))
+        self.description = String(localized: String.LocalizationValue(description))
+    }
+
     var body: some View {
         VStack(alignment: .leading, spacing: 8) {
             HStack(spacing: 8) {

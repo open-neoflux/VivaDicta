@@ -60,7 +60,7 @@ private struct CategoryChip: View {
                     Image(systemName: icon)
                         .font(.system(size: 11))
                 }
-                Text(title)
+                Text(String(localized: String.LocalizationValue(title)))
             }
             .font(.subheadline)
             .fontWeight(isSelected ? .semibold : .regular)

@@ -21,9 +21,9 @@ enum ChineseScriptPreference: String, CaseIterable, Identifiable, Sendable {
 
     var displayName: String {
         switch self {
-        case .auto: return "Auto"
-        case .simplified: return "Simplified (简体)"
-        case .traditional: return "Traditional (繁體)"
+        case .auto: return String(localized: "Auto")
+        case .simplified: return String(localized: "Simplified (简体)")
+        case .traditional: return String(localized: "Traditional (繁體)")
         }
     }
 

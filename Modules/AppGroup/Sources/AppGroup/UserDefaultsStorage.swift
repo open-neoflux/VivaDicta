@@ -53,6 +53,10 @@ public enum UserDefaultsStorage {
         public static let isSpellingCorrectionsEnabled = "isSpellingCorrectionsEnabled"
         public static let isParakeetVocabularyBoostingEnabled = "isParakeetVocabularyBoostingEnabled"
         public static let isAutoAudioCleanupEnabled = "isAutoAudioCleanupEnabled"
+
+        /// "huggingFace" or "mirror". Mainland China cannot reach huggingface.co
+        /// reliably, so model downloads fall back to hf-mirror.com.
+        public static let modelDownloadHost = "modelDownloadHost"
         public static let audioRetentionDays = "audioRetentionDays"
         public static let isAutoNoteCleanupEnabled = "isAutoNoteCleanupEnabled"
         public static let noteRetentionDays = "noteRetentionDays"

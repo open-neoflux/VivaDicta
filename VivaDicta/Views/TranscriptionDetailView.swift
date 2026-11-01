@@ -1893,7 +1893,7 @@ private struct PresetPickerSheet: View {
                     if overrideModeId == mode.id {
                         Label(mode.name, systemImage: "checkmark")
                     } else {
-                        Text(mode.name)
+                        Text(mode.displayName)
                     }
                 }
             }

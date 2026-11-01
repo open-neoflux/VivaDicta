@@ -111,7 +111,6 @@
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "18BA29242F7F29FD00C4F68B"
             BuildableName = "VivaDictaWatchWidgetExtension.appex"
-            BlueprintName = "VivaDictaWatchWidgetExtension"
             ReferencedContainer = "container:VivaDicta.xcodeproj">
          </BuildableReference>
       </BuildableProductRunnable>

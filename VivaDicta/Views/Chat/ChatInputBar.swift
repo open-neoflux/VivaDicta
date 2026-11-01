@@ -20,7 +20,7 @@ struct ChatInputBar: View {
     @Binding var text: String
     var isStreaming: Bool
     var isBusy: Bool = false
-    var placeholder: String = "Ask about this note..."
+    var placeholder: String = String(localized: "Ask about this note...")
     var leadingActions: [LeadingAction] = []
     var onSend: () -> Void
     var onStop: () -> Void

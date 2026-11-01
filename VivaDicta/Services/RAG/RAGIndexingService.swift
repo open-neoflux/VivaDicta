@@ -47,9 +47,23 @@ final class RAGIndexingService: NoteSearchService {
     static let shared = RAGIndexingService()
     private static let previewCharacterLimit = 180
     private static let maxLoggedChunksPerNote = 3
-    nonisolated private static let semanticSearchThreshold: Float = 0.25
-    private static let diagnosticThresholds: [Float] = [0.2, 0.0]
-    nonisolated private static let indexVersion = "v14_potion_base_32m"
+    /// Relevance floor for semantic search. Read from the user's slider in
+    /// Smart Search settings; falls back to ``SmartSearchFeature.defaultRelevanceThreshold``.
+    nonisolated private static var semanticSearchThreshold: Float {
+        Float(SmartSearchFeature.relevanceThreshold)
+    }
+
+    /// Diagnostic thresholds are derived from the live threshold so the debug
+    /// sweep keeps probing below whatever floor the user picked.
+    nonisolated private static var diagnosticThresholds: [Float] {
+        let base = semanticSearchThreshold
+        return [base - 0.05, base - 0.1, 0.0].map { max(0, $0) }
+    }
+    nonisolated private static let indexVersion = "v15_bge_small_zh"
+    /// Hugging Face id of the embedding model used by the vector index.
+    nonisolated static let embeddingModelID = "BAAI/bge-small-zh-v1.5"
+    /// Approximate on-disk size shown to the user before downloading.
+    nonisolated static let embeddingModelApproxMB = 90
     nonisolated private static let vectorStoreName = "vivadicta-rag-\(indexVersion)"
 
     @ObservationIgnored
@@ -72,6 +86,13 @@ final class RAGIndexingService: NoteSearchService {
 
     /// Whether the initial bulk indexing is currently running.
     private(set) var isIndexing = false
+
+    /// Whether the on-device embedding model has been downloaded and is usable.
+    /// Smart Search stays inert until the user explicitly downloads it.
+    private(set) var isEmbeddingModelReady = false
+
+    /// Whether a user-initiated model download is in flight.
+    private(set) var isDownloadingEmbeddingModel = false
 
     /// Number of transcriptions that have been indexed.
     private(set) var indexedTranscriptionCount = 0
@@ -107,6 +128,7 @@ final class RAGIndexingService: NoteSearchService {
 
     private init() {
         indexedTranscriptionCount = chunkMapping.count
+        isEmbeddingModelReady = Self.isEmbeddingModelDownloaded()
         logger.logInfo(
             "RAG service restored featureEnabled=\(SmartSearchFeature.isEnabled) indexingCompleted=\(UserDefaults.standard.bool(forKey: indexingCompletedKey)) mappedNotes=\(chunkMapping.count) storage=\(Self.storageDirectoryURL.path)"
         )
@@ -126,7 +148,7 @@ final class RAGIndexingService: NoteSearchService {
 
         let storageDir = RAGIndexingService.storageDirectoryURL
         let task = Task { [storageDir, logger] in
-            logger.logInfo("Initializing LumoKit with SwiftEmbedder potion-base-32M...")
+            logger.logInfo("Initializing LumoKit with SwiftEmbedder bge-small-zh-v1.5...")
             try await initializeLumoKit(storageDirectory: storageDir)
             logger.logInfo("LumoKit initialized successfully")
         }
@@ -188,11 +210,11 @@ final class RAGIndexingService: NoteSearchService {
             strategy=\(String(describing: chunkingConfig.strategy))
             """
         )
-        logger.logInfo("RAG init embedder=SwiftEmbedder model=minishlab/potion-base-32M")
+        logger.logInfo("RAG init embedder=SwiftEmbedder model=\(Self.embeddingModelID)")
         let kit = try await LumoKit(
             config: config,
             chunkingConfig: chunkingConfig,
-            modelSource: .id("minishlab/potion-base-32M")
+            modelSource: .id(Self.embeddingModelID)
         )
         lumoKit = kit
     }
@@ -248,6 +270,12 @@ final class RAGIndexingService: NoteSearchService {
     func indexAllIfNeeded(modelContext: ModelContext) async {
         guard SmartSearchFeature.isEnabled else {
             logger.logInfo("RAG indexing skipped because Smart Search is disabled")
+            indexedTranscriptionCount = chunkMapping.count
+            return
+        }
+
+        guard isEmbeddingModelReady else {
+            logger.logInfo("RAG indexing skipped: embedding model not downloaded yet")
             indexedTranscriptionCount = chunkMapping.count
             return
         }
@@ -539,6 +567,73 @@ final class RAGIndexingService: NoteSearchService {
         logger.logInfo("Cleared Smart Search vector store and metadata")
     }
 
+    // MARK: - Embedding Model Lifecycle
+
+    /// Directory where `VecturaEmbeddingsKit` caches Hugging Face snapshots.
+    nonisolated private static var embeddingModelCacheDirectory: URL {
+        URL.documentsDirectory.appending(path: "huggingface", directoryHint: .isDirectory)
+    }
+
+    /// Whether the embedding model snapshot is already on disk.
+    ///
+    /// The downloader stores the snapshot under
+    /// `Documents/huggingface/models/<owner>/<name>/`; the presence of a
+    /// non-empty `model.safetensors` (or its CoreML counterpart) means we do
+    /// not have to hit the network again.
+    nonisolated static func isEmbeddingModelDownloaded() -> Bool {
+        let root = embeddingModelCacheDirectory
+        let expected = root
+            .appending(path: "models", directoryHint: .isDirectory)
+            .appending(path: embeddingModelID, directoryHint: .isDirectory)
+        let fm = FileManager.default
+        guard fm.fileExists(atPath: expected.path) else { return false }
+
+        let weights = ["model.safetensors", "weights.safetensors", "model.mlpackage"]
+        if weights.contains(where: { fm.fileExists(atPath: expected.appending(path: $0).path) }) {
+            return true
+        }
+        // Fall back to any substantial file in the snapshot folder.
+        guard let enumerator = fm.enumerator(at: expected, includingPropertiesForKeys: [.fileSizeKey]) else {
+            return false
+        }
+        for case let file as URL in enumerator {
+            let size = (try? file.resourceValues(forKeys: [.fileSizeKey]).fileSize) ?? 0
+            if size > 1_000_000 { return true }
+        }
+        return false
+    }
+
+    /// Downloads the embedding model if needed. User-initiated from Settings;
+    /// nothing is fetched during normal app usage.
+    ///
+    /// There is no byte-level progress: `swift-embeddings` downloads through
+    /// `HubApi.snapshot()` without exposing a callback, so callers should show
+    /// an indeterminate spinner rather than a percentage.
+    func downloadEmbeddingModelIfNeeded(modelContext: ModelContext) async throws {
+        guard SmartSearchFeature.isEnabled else {
+            logger.logInfo("RAG model download skipped: Smart Search is disabled")
+            return
+        }
+        guard !isDownloadingEmbeddingModel else { return }
+
+        isDownloadingEmbeddingModel = true
+        defer { isDownloadingEmbeddingModel = false }
+
+        do {
+            logger.logInfo("RAG model download requested model=\(Self.embeddingModelID)")
+            try await ensureLumoKit()
+            isEmbeddingModelReady = Self.isEmbeddingModelDownloaded()
+            logger.logInfo("RAG model download finished ready=\(isEmbeddingModelReady)")
+            if isEmbeddingModelReady {
+                await indexAllIfNeeded(modelContext: modelContext)
+            }
+        } catch {
+            isEmbeddingModelReady = false
+            logger.logError("RAG model download failed: \(error.localizedDescription)")
+            throw error
+        }
+    }
+
     // MARK: - Search
 
     /// Searches the vector index for chunks relevant to the query.
@@ -548,6 +643,11 @@ final class RAGIndexingService: NoteSearchService {
     func search(query: String, topK: Int = 5) async throws -> [RAGSearchResult] {
         guard SmartSearchFeature.isEnabled else {
             searchLogger.logInfo("RAG search skipped because Smart Search is disabled")
+            return []
+        }
+
+        guard isEmbeddingModelReady else {
+            searchLogger.logInfo("RAG search skipped because the embedding model is not downloaded")
             return []
         }
 

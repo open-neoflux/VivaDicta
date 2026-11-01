@@ -30,7 +30,7 @@ struct TemplateSelectionView: View {
                     Text(template.displayName)
                         .font(.headline)
 
-                    Text(template.description)
+                    Text(String(localized: String.LocalizationValue(template.description)))
                         .font(.subheadline)
                         .foregroundStyle(.secondary)
                         .multilineTextAlignment(.leading)

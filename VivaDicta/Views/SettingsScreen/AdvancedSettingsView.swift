@@ -8,6 +8,7 @@
 import SwiftUI
 import AppGroup
 import CloudTranscription
+import LocalTranscription
 
 enum AppendWithVoiceStyle: String, CaseIterable, Identifiable {
     case toolbar
@@ -17,13 +18,16 @@ enum AppendWithVoiceStyle: String, CaseIterable, Identifiable {
 
     var displayName: String {
         switch self {
-        case .toolbar: "Toolbar"
-        case .floatingButton: "Floating Button"
+        case .toolbar: String(localized: "Toolbar")
+        case .floatingButton: String(localized: "Floating Button")
         }
     }
 }
 
 struct AdvancedSettingsView: View {
+    @AppStorage(UserDefaultsStorage.Keys.modelDownloadHost)
+    private var modelDownloadHost = LocalModelDownloader.ModelHost.huggingFace.rawValue
+
     @Environment(AppState.self) private var appState
 
     @AppStorage(UserDefaultsStorage.Keys.appendWithVoiceStyle)
@@ -113,7 +117,7 @@ struct AdvancedSettingsView: View {
                     Picker("Default AI Mode", selection: defaultAIMode) {
                         Text("None").tag("")
                         ForEach(aiConfiguredModes) { mode in
-                            Text(mode.name).tag(mode.id.uuidString)
+                            Text(mode.displayName).tag(mode.id.uuidString)
                         }
                     }
                     .onChange(of: defaultAIMode.wrappedValue) { _, _ in
@@ -236,6 +240,20 @@ struct AdvancedSettingsView: View {
                 }
             } header: {
                 Text("Return to App")
+            }
+
+            Section {
+                Picker("Model Download Server", selection: $modelDownloadHost) {
+                    Text("Hugging Face").tag("huggingFace")
+                    Text("HF Mirror (China)").tag("mirror")
+                }
+                .onChange(of: modelDownloadHost) { _, _ in
+                    HapticManager.selectionChanged()
+                }
+            } header: {
+                Text("Model Downloads")
+            } footer: {
+                Text("Whisper models are hosted on Hugging Face, which is slow or unreachable in mainland China. Choose the mirror there to download faster. Parakeet models always use Hugging Face.")
             }
         }
         .navigationTitle("Advanced")

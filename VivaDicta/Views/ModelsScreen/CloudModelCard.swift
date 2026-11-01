@@ -164,7 +164,7 @@ struct CloudModelCard: View {
 
             // Description
             VStack(alignment: .leading, spacing: 6) {
-                Text(model.description)
+                Text(String(localized: String.LocalizationValue(model.description)))
                 if let subscriptionNote {
                     Text(subscriptionNote)
                 }

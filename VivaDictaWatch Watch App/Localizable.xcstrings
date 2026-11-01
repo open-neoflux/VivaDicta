@@ -1,0 +1,59 @@
+{
+  "sourceLanguage": "en",
+  "strings": {
+    "All uploaded": {
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "已全部上传"
+          }
+        }
+      }
+    },
+    "Default": {
+      "extractionState": "stale",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "默认"
+          }
+        }
+      }
+    },
+    "Mode": {
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "模式"
+          }
+        }
+      }
+    },
+    "Open VivaDicta and start recording.": {},
+    "Record Voice Note": {},
+    "Uploading %lld %@": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "new",
+            "value": "Uploading %1$lld %2$@"
+          }
+        }
+      }
+    },
+    "Uploading ^[%lld file](inflect: true)": {
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "正在上传 %lld 个文件"
+          }
+        }
+      }
+    }
+  },
+  "version": "1.0"
+}

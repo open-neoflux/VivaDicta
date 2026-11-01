@@ -21,18 +21,23 @@ enum SourceTag {
     static let appleWatch = "appleWatch"
     static let liveTranslation = "liveTranslation"
 
+    /// Localized label for a source tag.
+    ///
+    /// The raw tag values stay stable ("app", "appleWatch", …) - only the
+    /// human-readable label changes per language.
     static func displayName(for tag: String?) -> String {
-        switch tag {
-        case app: "In-App"
+        let key: String = switch tag {
+        case app: "iPhone"
         case keyboard: "Keyboard"
         case shareExtension: "Shared"
         case actionExtension: "Action"
         case macApp: "Mac"
         case youtube: "YouTube"
-        case appleWatch: "Watch"
+        case appleWatch: "iWatch"
         case liveTranslation: "Live Translation"
         default: "Unknown"
         }
+        return String(localized: String.LocalizationValue(key))
     }
 
     static func icon(for tag: String?) -> String {

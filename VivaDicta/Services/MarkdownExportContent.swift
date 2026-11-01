@@ -20,10 +20,10 @@ enum MarkdownExportContent: String, CaseIterable, Identifiable, Sendable {
 
     var displayName: String {
         switch self {
-        case .allVariations: "Original + All Variations"
-        case .originalOnly: "Original Only"
-        case .originalAndLastVariation: "Original + Last Variation"
-        case .lastVariationOnly: "Last Variation Only"
+        case .allVariations: String(localized: "Original + All Variations")
+        case .originalOnly: String(localized: "Original Only")
+        case .originalAndLastVariation: String(localized: "Original + Last Variation")
+        case .lastVariationOnly: String(localized: "Last Variation Only")
         }
     }
 

@@ -12,6 +12,12 @@ struct VivaModePicker: View {
     @Binding var selectedModeName: String
     var onSelectionChanged: (() -> Void)?
 
+    /// The selected mode's localized name; falls back to the raw value when
+    /// the mode isn't in the list yet (e.g. during a cross-device sync).
+    private var selectedDisplayName: String {
+        modes.first { $0.name == selectedModeName }?.displayName ?? selectedModeName
+    }
+
     var body: some View {
         Menu {
             ForEach(modes) { mode in
@@ -20,15 +26,15 @@ struct VivaModePicker: View {
                     onSelectionChanged?()
                 } label: {
                     if mode.name == selectedModeName {
-                        Label(mode.name, systemImage: "checkmark")
+                        Label(mode.displayName, systemImage: "checkmark")
                     } else {
-                        Text(mode.name)
+                        Text(mode.displayName)
                     }
                 }
             }
         } label: {
             HStack(spacing: 4) {
-                Text(selectedModeName)
+                Text(selectedDisplayName)
                     .font(.headline)
                     .bold()
                     .lineLimit(1)

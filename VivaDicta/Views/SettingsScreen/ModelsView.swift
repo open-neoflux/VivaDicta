@@ -22,7 +22,7 @@ struct ModelsView: View {
             // Main segmented control at the top
             Picker("Model type", selection: $modelType) {
                 ForEach(TranscriptionModelType.allCases) {
-                    Text($0.rawValue.capitalized)
+                    Text(String(localized: String.LocalizationValue($0.rawValue.capitalized)))
                 }
             }
             .pickerStyle(.segmented)

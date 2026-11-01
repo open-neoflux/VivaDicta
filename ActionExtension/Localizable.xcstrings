@@ -1,0 +1,54 @@
+{
+  "sourceLanguage" : "en",
+  "strings" : {
+    "AI Processing" : {
+
+    },
+    "Autodetected by model" : {
+
+    },
+    "Cancel" : {
+
+    },
+    "Default" : {
+
+    },
+    "Language" : {
+
+    },
+    "Mode" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "模式"
+          }
+        }
+      }
+    },
+    "Transcribe" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "语音识别"
+          }
+        }
+      }
+    },
+    "Transcribe Audio" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "语音识别音频"
+          }
+        }
+      }
+    },
+    "Transcription" : {
+
+    }
+  },
+  "version" : "1.0"
+}

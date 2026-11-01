@@ -27,7 +27,7 @@ struct MultiNoteChatView: View {
     @State private var showNotesList = false
     @State private var selectedTranscription: Transcription?
     @Environment(\.colorScheme) private var colorScheme
-    @AppStorage(SmartSearchFeature.isEnabledKey) private var isSmartSearchEnabled = true
+    @AppStorage(SmartSearchFeature.isEnabledKey) private var isSmartSearchEnabled = false
     @Query(sort: \Transcription.timestamp, order: .reverse)
     private var allTranscriptions: [Transcription]
 
@@ -49,7 +49,7 @@ struct MultiNoteChatView: View {
                 text: $viewModel.inputText,
                 isStreaming: viewModel.isStreaming || viewModel.isAppleFMResponding,
                 isBusy: viewModel.isCompacting,
-                placeholder: "Ask about these notes...",
+                placeholder: String(localized: "Ask about these notes..."),
                 leadingActions: [
                     viewModel.canSearchWeb ? ChatInputBar.LeadingAction(
                         systemImage: "globe",

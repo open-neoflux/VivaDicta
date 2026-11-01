@@ -364,7 +364,7 @@ struct MainView: View {
 
     private var deleteAlertTitle: String {
         let count = selectedTranscriptionIDs.count
-        return "Delete \(count) \(count == 1 ? "Note" : "Notes")?"
+        return String(localized: "Delete ^[\(count) Note](inflect: true)?")
     }
 
     /// Drives the "Auto Share Note" sheet the record flow queues once a note

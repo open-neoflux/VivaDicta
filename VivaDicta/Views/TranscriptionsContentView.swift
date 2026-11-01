@@ -34,7 +34,10 @@ struct TranscriptionsFloatingControls {
 struct TranscriptionsContentView: View {
     @Environment(\.modelContext) private var modelContext
     @Environment(\.colorScheme) var colorScheme
-    @AppStorage(SmartSearchFeature.isEnabledKey) private var isSmartSearchEnabled = true
+    @AppStorage(SmartSearchFeature.isEnabledKey) private var isSmartSearchEnabled = false
+    /// Smart Search also needs its embedding model; until it is downloaded the
+    /// search bar stays keyword-only so results never silently go missing.
+    @State private var ragService = RAGIndexingService.shared
     @Query(sort: \Transcription.timestamp, order: .reverse) private var allTranscriptions: [Transcription]
     @Query(sort: \TranscriptionTag.sortOrder) private var allTags: [TranscriptionTag]
 
@@ -83,7 +86,7 @@ struct TranscriptionsContentView: View {
     var body: some View {
         ZStack(alignment: .bottom) {
             VStack(spacing: 0) {
-                if searchText.isEmpty, isSmartSearchEnabled, !allTranscriptions.isEmpty {
+                if searchText.isEmpty, isSmartSearchReady, !allTranscriptions.isEmpty {
                     TipView(SmartSearchDiscoveryTip())
                         .padding(.horizontal)
                         .padding(.top, 8)
@@ -160,7 +163,7 @@ struct TranscriptionsContentView: View {
         }
         .onChange(of: searchText) { _, newValue in
             if newValue.isEmpty {
-                searchMode = isSmartSearchEnabled ? .all : .keyword
+                searchMode = isSmartSearchReady ? .all : .keyword
             }
             performDebouncedSearch(with: newValue)
         }
@@ -274,8 +277,14 @@ struct TranscriptionsContentView: View {
         }
     }
 
+    /// Smart Search surfaces are shown only when the feature is on **and** the
+    /// embedding model has been downloaded.
+    private var isSmartSearchReady: Bool {
+        isSmartSearchEnabled && ragService.isEmbeddingModelReady
+    }
+
     private var showsCombinedResults: Bool {
-        isSmartSearchEnabled && searchMode == .all && !searchText.isEmpty
+        isSmartSearchReady && searchMode == .all && !searchText.isEmpty
     }
 
     private var combinedResultsAreEmpty: Bool {
@@ -301,7 +310,7 @@ struct TranscriptionsContentView: View {
     }
 
     private var displayedTranscriptions: [Transcription] {
-        guard isSmartSearchEnabled else {
+        guard isSmartSearchReady else {
             return keywordDisplayedTranscriptions
         }
 
@@ -314,7 +323,7 @@ struct TranscriptionsContentView: View {
     }
 
     private func syncDisplayedIDs() {
-        guard isSmartSearchEnabled else {
+        guard isSmartSearchReady else {
             displayedTranscriptionIDs = Set(keywordDisplayedTranscriptions.map(\.id))
             return
         }
@@ -366,7 +375,7 @@ struct TranscriptionsContentView: View {
                 }
 
                 let keywordResults = keywordSearchResults(for: searchTerm)
-                guard isSmartSearchEnabled else {
+                guard isSmartSearchReady else {
                     filteredTranscriptions = keywordResults
                     smartSearchMatches = []
                     semanticScoresByID = [:]
@@ -429,7 +438,7 @@ struct TranscriptionsContentView: View {
     }
 
     private func currentSemanticScore(for transcriptionID: UUID) -> Float? {
-        guard isSmartSearchEnabled, searchMode == .smart else { return nil }
+        guard isSmartSearchReady, searchMode == .smart else { return nil }
         return semanticScoresByID[transcriptionID]
     }
 
@@ -545,7 +554,7 @@ struct TranscriptionsContentView: View {
     @ViewBuilder
     private var emptyFilteredStateView: some View {
         if !searchText.isEmpty {
-            if isSmartSearchEnabled, searchMode == .smart {
+            if isSmartSearchReady, searchMode == .smart {
                 ContentUnavailableView(
                     "No Smart Matches",
                     systemImage: "sparkle.magnifyingglass",
@@ -579,7 +588,7 @@ private struct TranscriptionSearchControlsView: View {
     let availableSourceTags: [String]
     let allTags: [TranscriptionTag]
     let searchText: String
-    @AppStorage(SmartSearchFeature.isEnabledKey) private var isSmartSearchEnabled = true
+    @AppStorage(SmartSearchFeature.isEnabledKey) private var isSmartSearchEnabled = false
     @Binding var selectedSourceTags: Set<String>
     @Binding var selectedUserTagIds: Set<UUID>
     @Binding var searchMode: TranscriptionSearchMode
@@ -594,7 +603,7 @@ private struct TranscriptionSearchControlsView: View {
             )
         }
 
-        if isSmartSearchEnabled, !searchText.isEmpty {
+        if isSmartSearchEnabled, RAGIndexingService.shared.isEmbeddingModelReady, !searchText.isEmpty {
             Picker("Search Mode", selection: $searchMode) {
                 Text("All")
                     .tag(TranscriptionSearchMode.all)

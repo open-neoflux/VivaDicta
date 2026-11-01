@@ -16,6 +16,37 @@ public enum LocalModelDownloader {
     /// Receives normalized progress between 0.0 and 1.0.
     public typealias ProgressHandler = @Sendable (Double) -> Void
 
+    // MARK: - Download source
+
+    /// Where WhisperKit pulls model files from.
+    ///
+    /// Hugging Face is frequently unreachable or extremely slow from mainland
+    /// China, which made the 632 MB Whisper models effectively undownloadable.
+    /// `hf-mirror.com` is a reverse proxy for the same repositories, so the
+    /// file layout is identical and no repackaging is needed.
+    ///
+    /// Parakeet (FluidAudio) does not expose an endpoint override, so it always
+    /// uses Hugging Face regardless of this setting.
+    public enum ModelHost: String, Sendable, CaseIterable {
+        case huggingFace
+        case mirror
+
+        /// Host passed to `WhisperKit.download(endpoint:)`.
+        public var whisperKitEndpoint: String {
+            switch self {
+            case .huggingFace: "https://huggingface.co"
+            case .mirror: "https://hf-mirror.com"
+            }
+        }
+
+        public var displayName: String {
+            switch self {
+            case .huggingFace: "Hugging Face"
+            case .mirror: "HF Mirror"
+            }
+        }
+    }
+
     // MARK: - Parakeet
 
     /// Downloads (if not cached) and validates the Parakeet ASR model plus the
@@ -70,6 +101,7 @@ public enum LocalModelDownloader {
     /// Honors `Task.checkCancellation()` at each phase boundary.
     public static func downloadAndPrepareWhisperKit(
         modelName: String,
+        host: ModelHost = .huggingFace,
         onPhase: @escaping WhisperKitPhaseHandler
     ) async throws {
         let config = WhisperKitConfig(
@@ -92,6 +124,7 @@ public enum LocalModelDownloader {
             let downloadedFolder = try await WhisperKit.download(
                 variant: modelName,
                 from: "argmaxinc/whisperkit-coreml",
+                endpoint: host.whisperKitEndpoint,
                 progressCallback: { @Sendable progress in
                     onPhase(.downloading(fractionCompleted: progress.fractionCompleted))
                 }

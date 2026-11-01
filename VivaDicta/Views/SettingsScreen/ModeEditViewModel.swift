@@ -115,34 +115,34 @@ class ModeEditViewModel {
         return nil
     }
 
-    private static let disableHint = ", or disable AI Processing"
-    private static let disableReminderExtractorHint = ", or turn off the separate extractor"
-
+    /// Validation hints shown under the AI section. Each sentence is localized
+    /// whole - the "or disable AI Processing" suffix is part of the sentence
+    /// rather than concatenated, so translations can reorder it naturally.
     var aiEnhancementValidationMessage: String? {
         guard aiEnhanceEnabled else { return nil }
         guard let provider = aiProvider else {
-            return "Select an AI provider\(Self.disableHint)"
+            return String(localized: "Select an AI provider, or disable AI Processing")
         }
         if !isProviderReady(provider) {
             if provider == .apple {
-                return "\(appleFoundationModelStatusMessage)\(Self.disableHint)"
+                return "\(appleFoundationModelStatusMessage)\(String(localized: ", or disable AI Processing"))"
             }
             if provider == .ollama {
-                return "Configure Ollama server in AI Providers settings\(Self.disableHint)"
+                return String(localized: "Configure Ollama server in AI Providers settings, or disable AI Processing")
             }
             if provider == .customOpenAI {
-                return "Configure Custom AI Provider in AI Providers settings\(Self.disableHint)"
+                return String(localized: "Configure Custom AI Provider in AI Providers settings, or disable AI Processing")
             }
             if provider == .local {
-                return "Download the model in AI Providers\(Self.disableHint)"
+                return String(localized: "Download the model in AI Providers, or disable AI Processing")
             }
-            return "Add API key to continue\(Self.disableHint)"
+            return String(localized: "Add API key to continue, or disable AI Processing")
         }
         if aiModel == nil || aiModel!.isEmpty {
-            return "Select an AI model\(Self.disableHint)"
+            return String(localized: "Select an AI model, or disable AI Processing")
         }
         if selectedPresetId == nil {
-            return "Select a preset\(Self.disableHint)"
+            return String(localized: "Select a preset, or disable AI Processing")
         }
         return nil
     }
@@ -154,22 +154,22 @@ class ModeEditViewModel {
     var reminderExtractorValidationMessage: String? {
         guard aiEnhanceEnabled, usesSeparateReminderExtractor else { return nil }
         guard let provider = reminderExtractorProvider else {
-            return "Select a reminder extractor provider\(Self.disableReminderExtractorHint)"
+            return String(localized: "Select a reminder extractor provider, or turn off the separate extractor")
         }
         if !isProviderReady(provider) {
             if provider == .apple {
-                return "\(appleFoundationModelStatusMessage)\(Self.disableReminderExtractorHint)"
+                return "\(appleFoundationModelStatusMessage)\(String(localized: ", or turn off the separate extractor"))"
             }
             if provider == .ollama {
-                return "Configure Ollama server in AI Providers settings\(Self.disableReminderExtractorHint)"
+                return String(localized: "Configure Ollama server in AI Providers settings, or turn off the separate extractor")
             }
             if provider == .customOpenAI {
-                return "Configure Custom AI Provider in AI Providers settings\(Self.disableReminderExtractorHint)"
+                return String(localized: "Configure Custom AI Provider in AI Providers settings, or turn off the separate extractor")
             }
-            return "Add API key to continue\(Self.disableReminderExtractorHint)"
+            return String(localized: "Add API key to continue, or turn off the separate extractor")
         }
         if reminderExtractorModel == nil || reminderExtractorModel?.isEmpty == true {
-            return "Select a reminder extractor model\(Self.disableReminderExtractorHint)"
+            return String(localized: "Select a reminder extractor model, or turn off the separate extractor")
         }
         return nil
     }

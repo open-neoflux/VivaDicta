@@ -193,7 +193,7 @@ struct WatchRecordView: View {
             EmptyView()
 
         case .transferring(let count):
-            Label("Uploading \(count) \(count == 1 ? "file" : "files")", systemImage: "icloud.and.arrow.up")
+            Label("Uploading ^[\(count) file](inflect: true)", systemImage: "icloud.and.arrow.up")
                 .font(.caption2)
                 .foregroundStyle(.secondary)
                 .transition(.opacity)

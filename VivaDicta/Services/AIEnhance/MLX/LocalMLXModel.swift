@@ -48,15 +48,15 @@ nonisolated enum LocalMLXModel: String, CaseIterable, Sendable {
 
     var subtitle: String {
         switch self {
-        case .qwen35_4B: "Qwen3.5, larger and higher quality. Broad multilingual."
-        case .qwen35_2B: "Qwen3.5. Broad multilingual support."
-        case .qwen35_08B: "Tiny Qwen3.5, fastest option. Broad languages, but lower quality."
-        case .phi4Mini: "Microsoft's Phi-4 Mini. Multilingual (~20+ languages)."
-        case .llama32_1B: "Meta's tiny Llama 3.2. Best in English + 7 major languages."
-        case .llama32_3B: "Meta's Llama 3.2. Best in English + 7 major languages."
-        case .ministral3B: "Mistral's edge model. Strongest in European languages."
-        case .falcon3_3B: "TII's Falcon3. Mainly English + a few European languages."
-        case .granite33_2B: "IBM's Granite (Apache-2.0). ~12 languages, strong at following instructions."
+        case .qwen35_4B: String(localized: "Qwen3.5, larger and higher quality. Broad multilingual.")
+        case .qwen35_2B: String(localized: "Qwen3.5. Broad multilingual support.")
+        case .qwen35_08B: String(localized: "Tiny Qwen3.5, fastest option. Broad languages, but lower quality.")
+        case .phi4Mini: String(localized: "Microsoft's Phi-4 Mini. Multilingual (~20+ languages).")
+        case .llama32_1B: String(localized: "Meta's tiny Llama 3.2. Best in English + 7 major languages.")
+        case .llama32_3B: String(localized: "Meta's Llama 3.2. Best in English + 7 major languages.")
+        case .ministral3B: String(localized: "Mistral's edge model. Strongest in European languages.")
+        case .falcon3_3B: String(localized: "TII's Falcon3. Mainly English + a few European languages.")
+        case .granite33_2B: String(localized: "IBM's Granite (Apache-2.0). ~12 languages, strong at following instructions.")
         }
     }
 

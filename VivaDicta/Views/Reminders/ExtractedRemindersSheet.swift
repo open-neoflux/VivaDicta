@@ -22,7 +22,7 @@ struct ExtractedRemindersSheet: View {
     @State private var isImportingAll = false
     @State private var showErrorAlert = false
     @State private var errorMessage = ""
-    @State private var errorTitle = "Reminder Import Failed"
+    @State private var errorTitle = String(localized: "Reminder Import Failed")
     @State private var shouldOfferSettingsShortcut = false
 
     private var visibleDrafts: [ExtractedReminderDraft] {
@@ -283,13 +283,13 @@ struct ExtractedRemindersSheet: View {
         errorMessage = error.localizedDescription
 
         if let reminderError = error as? RemindersImportError {
-            errorTitle = "Reminder Import Failed"
+            errorTitle = String(localized: "Reminder Import Failed")
             shouldOfferSettingsShortcut = reminderError.shouldOfferSettingsShortcut
         } else if let calendarError = error as? CalendarImportError {
-            errorTitle = "Calendar Import Failed"
+            errorTitle = String(localized: "Calendar Import Failed")
             shouldOfferSettingsShortcut = calendarError.shouldOfferSettingsShortcut
         } else {
-            errorTitle = "Import Failed"
+            errorTitle = String(localized: "Import Failed")
             shouldOfferSettingsShortcut = false
         }
 

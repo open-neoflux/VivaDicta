@@ -1,0 +1,6 @@
+/* App display name */
+"CFBundleDisplayName" = "VivaDicta";
+"CFBundleName" = "VivaDicta";
+
+/* Microphone usage */
+"NSMicrophoneUsageDescription" = "VivaDicta 需要使用麦克风录制你的语音，并通过设备端或云端语音识别将其语音识别为文字。";

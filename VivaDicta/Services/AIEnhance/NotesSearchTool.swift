@@ -143,6 +143,16 @@ enum NotesSearchToolRuntime {
             )
         }
 
+        guard await SmartSearchFeature.isReady else {
+            logger.logInfo("Cross-note search skipped because the embedding model is not downloaded")
+            return CrossNoteSearchPayload(
+                query: trimmedQuery,
+                status: .error,
+                results: [],
+                message: "Other-note search is unavailable because the Smart Search model has not been downloaded."
+            )
+        }
+
         guard let modelContainer else {
             return CrossNoteSearchPayload(
                 query: trimmedQuery,

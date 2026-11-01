@@ -190,7 +190,7 @@ struct OllamaConfigurationView: View {
                 Image(systemName: "checkmark.circle.fill")
                     .foregroundStyle(.green)
                     .accessibilityLabel("Connection successful")
-                Text("Connected • \(modelCount) model\(modelCount == 1 ? "" : "s") available")
+                Text("Connected • ^[\(modelCount) model](inflect: true) available")
                     .font(.subheadline)
                     .foregroundStyle(.secondary)
             }

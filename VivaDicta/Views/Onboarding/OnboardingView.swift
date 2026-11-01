@@ -102,7 +102,8 @@ struct OnboardingView: View {
                             icon: "checkmark.circle.fill",
                             color: .green
                         ) {
-                            navigateTo(.keyboard)
+                            // Keyboard onboarding page removed: not a product goal.
+                            onComplete()
                         }
                     case .denied:
                         OnboardingPrimaryButton(
@@ -185,7 +186,7 @@ struct OnboardingView: View {
                 if granted {
                     // Small delay before continuing
                     try? await Task.sleep(for: .milliseconds(300))
-                    navigateTo(.keyboard)
+                    onComplete()
                 }
             }
         }

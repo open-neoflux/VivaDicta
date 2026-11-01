@@ -168,9 +168,9 @@ enum PresetFilter: String, CaseIterable, Identifiable {
 
     var title: String {
         switch self {
-        case .all: "All"
-        case .system: "System"
-        case .custom: "Custom"
+        case .all: String(localized: "All")
+        case .system: String(localized: "System")
+        case .custom: String(localized: "Custom")
         }
     }
 }

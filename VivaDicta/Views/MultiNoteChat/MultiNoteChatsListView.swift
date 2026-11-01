@@ -14,7 +14,7 @@ struct MultiNoteChatsListView: View {
     @Environment(AppState.self) var appState
     @Environment(\.modelContext) private var modelContext
     @Environment(\.dismiss) private var dismiss
-    @AppStorage(SmartSearchFeature.isEnabledKey) private var isSmartSearchEnabled = true
+    @AppStorage(SmartSearchFeature.isEnabledKey) private var isSmartSearchEnabled = false
 
     @State private var viewModel: ChatsListViewModel?
     @State private var navigationPath = NavigationPath()
@@ -61,7 +61,7 @@ struct MultiNoteChatsListView: View {
 
                 Picker("Chat Type", selection: $selectedTab) {
                     ForEach(availableTabs, id: \.self) { tab in
-                        Text(tab.rawValue).tag(tab)
+                        Text(String(localized: String.LocalizationValue(tab.rawValue))).tag(tab)
                     }
                 }
                 .pickerStyle(.segmented)

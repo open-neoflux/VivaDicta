@@ -89,7 +89,7 @@ struct TagFilterBar: View {
                         .font(.caption2)
                         .foregroundStyle(isSelected ? .white : color)
                 }
-                Text(label)
+                Text(String(localized: String.LocalizationValue(label)))
                     .font(.caption)
                     .foregroundStyle(isSelected ? .white : .primary)
             }

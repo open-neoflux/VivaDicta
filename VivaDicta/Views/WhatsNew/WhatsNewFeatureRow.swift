@@ -29,7 +29,7 @@ struct WhatsNewFeatureRow: View {
                 Text(feature.title)
                     .font(.headline)
 
-                Text(feature.description)
+                Text(String(localized: String.LocalizationValue(feature.description)))
                     .font(.subheadline)
                     .foregroundStyle(.secondary)
             }

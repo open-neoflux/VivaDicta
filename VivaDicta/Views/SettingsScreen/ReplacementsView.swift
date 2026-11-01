@@ -87,7 +87,7 @@ struct ReplacementsView: View {
             }
             Button("Cancel", role: .cancel) { }
         } message: {
-            Text("Are you sure you want to delete \(selectedReplacements.count) replacement\(selectedReplacements.count == 1 ? "" : "s")? This action cannot be undone.")
+            Text("Are you sure you want to delete ^[\(selectedReplacements.count) replacement](inflect: true)? This action cannot be undone.")
         }
     }
 

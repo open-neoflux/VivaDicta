@@ -19,9 +19,9 @@ enum RecordingOrbStyle: String, CaseIterable, Identifiable, Sendable {
 
     var displayName: String {
         switch self {
-        case .particles: return "Particles"
-        case .ascii: return "ASCII"
-        case .hidden: return "None"
+        case .particles: return String(localized: "Particles")
+        case .ascii: return String(localized: "ASCII")
+        case .hidden: return String(localized: "None")
         }
     }
 }

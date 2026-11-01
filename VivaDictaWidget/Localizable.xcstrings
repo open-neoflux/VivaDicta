@@ -1,0 +1,186 @@
+{
+  "sourceLanguage" : "en",
+  "strings" : {
+    "Ask & Record" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "提问并录音"
+          }
+        }
+      }
+    },
+    "Ask AI" : {
+
+    },
+    "Color" : {
+
+    },
+    "Configuration" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "配置"
+          }
+        }
+      }
+    },
+    "Configure the recording control." : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "配置录音控件。"
+          }
+        }
+      }
+    },
+    "Quick Actions" : {
+
+    },
+    "Quickly create a new recording" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "快速创建新录音"
+          }
+        }
+      }
+    },
+    "Quickly open Ask AI or start a new recording." : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "快速打开“询问 AI”或开始新录音。"
+          }
+        }
+      }
+    },
+    "Record" : {
+
+    },
+    "Record Note" : {
+
+    },
+    "Record Note in VivaDicta" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "在 VivaDicta 中录制笔记"
+          }
+        }
+      }
+    },
+    "Recording" : {
+
+    },
+    "Recording Control" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "录音控件"
+          }
+        }
+      }
+    },
+    "Recording in VivaDicta" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "在 VivaDicta 中录音"
+          }
+        }
+      }
+    },
+    "Recording Name" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "录音名称"
+          }
+        }
+      }
+    },
+    "Search notes" : {
+
+    },
+    "Search notes, start a recording, or open Ask AI." : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "搜索笔记、开始录音，或打开“询问 AI”。"
+          }
+        }
+      }
+    },
+    "Select color" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "选择颜色"
+          }
+        }
+      }
+    },
+    "Session Active" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "会话活跃"
+          }
+        }
+      }
+    },
+    "Start or stop recording in VivaDicta" : {
+
+    },
+    "Toggle Recording" : {
+
+    },
+    "Toggle recording in VivaDicta" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "在 VivaDicta 中切换录音"
+          }
+        }
+      }
+    },
+    "Toggle Session" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "切换会话"
+          }
+        }
+      }
+    },
+    "Toggle the keyboard session state" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "切换键盘会话状态"
+          }
+        }
+      }
+    },
+    "VivaDicta" : {
+
+    }
+  },
+  "version" : "1.0"
+}

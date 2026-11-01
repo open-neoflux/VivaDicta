@@ -50,7 +50,7 @@ struct SmartSearchChatView: View {
                 text: $viewModel.inputText,
                 isStreaming: viewModel.isStreaming || viewModel.isAppleFMResponding,
                 isBusy: viewModel.isCompacting,
-                placeholder: "Search your notes...",
+                placeholder: String(localized: "Search your notes..."),
                 onSend: { viewModel.sendMessage() },
                 onStop: { viewModel.cancelStreaming() }
             )
