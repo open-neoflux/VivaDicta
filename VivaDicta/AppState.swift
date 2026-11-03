@@ -51,6 +51,16 @@ class AppState {
     private let logger = Logger(category: .appState)
 
     /// The active Live Activity for Dynamic Island display, if any.
+    /// One-shot global toast shown above MainView, e.g. after a model finishes
+    /// downloading. Set by `ModelDownloadManager.onModelDownloaded`.
+    struct ToastMessage: Identifiable, Equatable {
+        let id = UUID()
+        let text: String
+        let symbol: String
+    }
+
+    var toast: ToastMessage?
+
     var liveActivity: Activity<VivaDictaLiveActivityAttributes>? = nil
     private var liveActivityTimer: Timer?
     private var liveActivityStartTime: Date?
@@ -172,6 +182,9 @@ class AppState {
             } else if let whisperKitModel = model as? WhisperKitModel {
                 self?.aiService.updateDefaultModeIfNeeded(provider: .whisperKit, modelName: whisperKitModel.name)
             }
+            guard let self else { return }
+            HapticManager.success()
+            self.showToast(String(localized: "\(model.displayName) is ready"), symbol: "checkmark.circle.fill")
         }
 
         // Initialize TranscriptionManager with the current mode
@@ -209,6 +222,18 @@ class AppState {
             await backgroundTaskService.processQueue()
             let queuedFiles = backgroundTaskService.queuedFileNames()
             await watchProcessor.processOrphanedFiles(excludedFileNames: queuedFiles)
+        }
+    }
+
+    /// Shows a transient toast; a newer toast replaces the current one.
+    func showToast(_ text: String, symbol: String = "checkmark.circle.fill", duration: Duration = .seconds(2.5)) {
+        let message = ToastMessage(text: text, symbol: symbol)
+        toast = message
+        Task { [weak self] in
+            try? await Task.sleep(for: duration)
+            if self?.toast?.id == message.id {
+                self?.toast = nil
+            }
         }
     }
 

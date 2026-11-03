@@ -23,6 +23,16 @@
         }
       }
     },
+    "%@ is ready": {
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%@ 已准备就绪"
+          }
+        }
+      }
+    },
     "%@/10": {},
     "%@s": {
       "localizations": {
@@ -2284,6 +2294,16 @@
         }
       }
     },
+    "Chinese & English": {
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "中英文"
+          }
+        }
+      }
+    },
     "Chinese Script": {
       "localizations": {
         "zh-Hans": {
@@ -3374,6 +3394,16 @@
         }
       }
     },
+    "Deleting the model frees up space but turns off smart search until you download it again.": {
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "删除模型可释放空间，但在重新下载之前智能搜索将不可用。"
+          }
+        }
+      }
+    },
     "Description": {
       "localizations": {
         "zh-Hans": {
@@ -3573,6 +3603,26 @@
           "stringUnit": {
             "state": "translated",
             "value": "下载设备端模型，即可按语义搜索你的笔记。支持中文和英文。"
+          }
+        }
+      }
+    },
+    "Download the semantic search model (%lld MB) to search your notes by meaning.": {
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "下载语义搜索模型（%lld MB），即可按语义搜索你的笔记。"
+          }
+        }
+      }
+    },
+    "Downloading": {
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "下载中"
           }
         }
       }
@@ -4493,6 +4543,16 @@
           "stringUnit": {
             "state": "translated",
             "value": "在此笔记中查找提醒事项和日历事件，并在添加到 Apple 提醒事项或日历之前先行查看。"
+          }
+        }
+      }
+    },
+    "Finishing": {
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "即将完成"
           }
         }
       }
@@ -7876,6 +7936,16 @@
         }
       }
     },
+    "Preparing": {
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "准备中"
+          }
+        }
+      }
+    },
     "Preparing...": {
       "localizations": {
         "zh-Hans": {
@@ -9117,7 +9187,6 @@
       }
     },
     "Semantic Search Model": {
-      "extractionState": "stale",
       "localizations": {
         "zh-Hans": {
           "stringUnit": {
@@ -11256,6 +11325,16 @@
           "stringUnit": {
             "state": "translated",
             "value": "未知"
+          }
+        }
+      }
+    },
+    "Unzipping": {
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "解压中"
           }
         }
       }

@@ -13,6 +13,8 @@ import os
 @preconcurrency import LumoKit
 @preconcurrency import VecturaKit
 import VecturaEmbeddingsKit
+import ZIPFoundation
+import LocalTranscription
 
 /// Result of a RAG semantic search, mapping chunks back to source transcriptions.
 struct RAGSearchResult: Sendable {
@@ -93,6 +95,19 @@ final class RAGIndexingService: NoteSearchService {
 
     /// Whether a user-initiated model download is in flight.
     private(set) var isDownloadingEmbeddingModel = false
+
+    /// Coarse stage of the embedding-model download, mirroring
+    /// `ModelDownloadManager.DownloadStage` so both screens read the same way.
+    enum EmbeddingDownloadStage: Equatable {
+        case idle
+        case downloading
+        case unzipping
+    }
+
+    private(set) var embeddingDownloadStage: EmbeddingDownloadStage = .idle
+
+    /// 0...1 across the network transfer; stays at 1 while unzipping.
+    private(set) var embeddingDownloadProgress: Double = 0
 
     /// Number of transcriptions that have been indexed.
     private(set) var indexedTranscriptionCount = 0
@@ -603,28 +618,50 @@ final class RAGIndexingService: NoteSearchService {
         return false
     }
 
+    /// CDN base holding the zipped embedding model. Same host as the Whisper
+    /// archives so one setting of expectations covers both downloads.
+    nonisolated static let qiniuEmbeddingBase = "http://tntulx4vr.hd-bkt.clouddn.com/"
+
+    /// Archive name on the CDN, e.g. `bge-small-zh-v1.5.zip`.
+    nonisolated static var embeddingArchiveName: String {
+        "\((embeddingModelID as NSString).lastPathComponent).zip"
+    }
+
     /// Downloads the embedding model if needed. User-initiated from Settings;
     /// nothing is fetched during normal app usage.
     ///
-    /// There is no byte-level progress: `swift-embeddings` downloads through
-    /// `HubApi.snapshot()` without exposing a callback, so callers should show
-    /// an indeterminate spinner rather than a percentage.
+    /// Prefers the zip on the project CDN (a few seconds) and falls back to
+    /// Hugging Face via `swift-embeddings` when the archive is unavailable.
     func downloadEmbeddingModelIfNeeded(modelContext: ModelContext) async throws {
-        guard SmartSearchFeature.isEnabled else {
-            logger.logInfo("RAG model download skipped: Smart Search is disabled")
-            return
-        }
+        // Deliberately not gated on `SmartSearchFeature.isEnabled`: the user is
+        // allowed to prefetch the model first and switch the feature on later,
+        // and silently returning here made the button look broken.
         guard !isDownloadingEmbeddingModel else { return }
 
         isDownloadingEmbeddingModel = true
-        defer { isDownloadingEmbeddingModel = false }
+        embeddingDownloadStage = .downloading
+        embeddingDownloadProgress = 0
+        defer {
+            isDownloadingEmbeddingModel = false
+            embeddingDownloadStage = .idle
+            embeddingDownloadProgress = 0
+        }
 
         do {
             logger.logInfo("RAG model download requested model=\(Self.embeddingModelID)")
+
+            if let archive = URL(string: Self.qiniuEmbeddingBase)?.appendingPathComponent(Self.embeddingArchiveName) {
+                do {
+                    try await downloadEmbeddingArchive(from: archive)
+                } catch {
+                    logger.logWarning("RAG CDN archive failed (\(error.localizedDescription)); falling back to Hugging Face")
+                }
+            }
+
             try await ensureLumoKit()
             isEmbeddingModelReady = Self.isEmbeddingModelDownloaded()
             logger.logInfo("RAG model download finished ready=\(isEmbeddingModelReady)")
-            if isEmbeddingModelReady {
+            if isEmbeddingModelReady, SmartSearchFeature.isEnabled {
                 await indexAllIfNeeded(modelContext: modelContext)
             }
         } catch {
@@ -632,6 +669,74 @@ final class RAGIndexingService: NoteSearchService {
             logger.logError("RAG model download failed: \(error.localizedDescription)")
             throw error
         }
+    }
+
+    /// Streams the model archive with byte progress, then unpacks it into the
+    /// Hugging Face cache layout so `swift-embeddings` finds it without a
+    /// network round-trip.
+    private func downloadEmbeddingArchive(from url: URL) async throws {
+        let root = Self.embeddingModelCacheDirectory
+        let expected = root
+            .appending(path: "models", directoryHint: .isDirectory)
+            .appending(path: Self.embeddingModelID, directoryHint: .isDirectory)
+        if FileManager.default.fileExists(atPath: expected.path) {
+            embeddingDownloadProgress = 1
+            return
+        }
+        try FileManager.default.createDirectory(at: root, withIntermediateDirectories: true)
+
+        let archive = root.appendingPathComponent(Self.embeddingArchiveName)
+        try? FileManager.default.removeItem(at: archive)
+        defer { try? FileManager.default.removeItem(at: archive) }
+
+        let downloader = ZipDownloadProgressDelegate(destination: archive) { [weak self] fraction in
+            Task { @MainActor in self?.embeddingDownloadProgress = fraction }
+        }
+        try await downloader.run(url: url)
+
+        embeddingDownloadStage = .unzipping
+        embeddingDownloadProgress = 1
+
+        let unpackRoot = root.appendingPathComponent(".unzip-\(UUID().uuidString)")
+        try FileManager.default.createDirectory(at: unpackRoot, withIntermediateDirectories: true)
+        defer { try? FileManager.default.removeItem(at: unpackRoot) }
+        try FileManager.default.unzipItem(at: archive, to: unpackRoot)
+
+        // Accept `root/BAAI/bge-small-zh-v1.5` or `root/bge-small-zh-v1.5`.
+        let candidates = [
+            unpackRoot.appending(path: Self.embeddingModelID, directoryHint: .isDirectory),
+            unpackRoot.appending(path: (Self.embeddingModelID as NSString).lastPathComponent, directoryHint: .isDirectory),
+            unpackRoot,
+        ]
+        guard let source = candidates.first(where: { FileManager.default.fileExists(atPath: $0.path) }) else {
+            throw LocalModelDownloadError.emptyArchive
+        }
+        try FileManager.default.createDirectory(
+            at: expected.deletingLastPathComponent(),
+            withIntermediateDirectories: true
+        )
+        try? FileManager.default.removeItem(at: expected)
+        try FileManager.default.moveItem(at: source, to: expected)
+        logger.logInfo("RAG embedding model unpacked to \(expected.path)")
+    }
+
+    /// Removes the downloaded embedding model from disk and drops the index.
+    ///
+    /// The vector store is meaningless without the same embedder, so clearing
+    /// both keeps the two in sync.
+    func deleteEmbeddingModel() throws {
+        let root = Self.embeddingModelCacheDirectory
+        let expected = root
+            .appending(path: "models", directoryHint: .isDirectory)
+            .appending(path: Self.embeddingModelID, directoryHint: .isDirectory)
+        try? FileManager.default.removeItem(at: expected)
+
+        isEmbeddingModelReady = false
+        chunkMapping = [:]
+        transcriptionHashes = [:]
+        UserDefaults.standard.set(false, forKey: indexingCompletedKey)
+        indexedTranscriptionCount = 0
+        logger.logInfo("RAG embedding model deleted; index metadata cleared")
     }
 
     // MARK: - Search

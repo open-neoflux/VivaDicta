@@ -156,12 +156,40 @@ struct MainView: View {
             }
     }
 
+    /// Lightweight confirmation banner (e.g. "Whisper Large V3 Turbo is ready").
+    @ViewBuilder
+    private var globalToastOverlay: some View {
+        if let toast = appState.toast {
+            HStack(spacing: 10) {
+                Image(systemName: toast.symbol)
+                    .foregroundStyle(.green)
+                Text(toast.text)
+                    .font(.subheadline.weight(.medium))
+                    .lineLimit(2)
+            }
+            .padding(.horizontal, 16)
+            .padding(.vertical, 12)
+            .background(.regularMaterial, in: .rect(cornerRadius: 16, style: .continuous))
+            .overlay {
+                RoundedRectangle(cornerRadius: 16, style: .continuous)
+                    .stroke(.separator, lineWidth: 0.5)
+            }
+            .shadow(color: .black.opacity(0.12), radius: 12, y: 4)
+            .padding(.horizontal, 20)
+            .padding(.top, 8)
+            .transition(.move(edge: .top).combined(with: .opacity))
+            .allowsHitTesting(false)
+        }
+    }
+
     @ViewBuilder
     private var contentNavigationViewBase: some View {
         rootNavigationStack
             .overlay { recordingOverlay }
             .overlay { hudOverlay }
+            .overlay(alignment: .top) { globalToastOverlay }
             .animation(.default, value: appState.recordViewModel?.recordingState)
+            .animation(.spring(duration: 0.35), value: appState.toast)
             .onChange(of: appState.recordViewModel?.recordingState) { _, newState in
                 // Suppress the recording sheet while the full-screen keyboard
                 // return prompt is up; recording still runs in the background.

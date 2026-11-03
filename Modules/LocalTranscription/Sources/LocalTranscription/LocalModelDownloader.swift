@@ -83,18 +83,16 @@ public enum LocalModelDownloader {
 
         onPhase(.downloading(fractionCompleted: 0))
 
-        let (tempFile, response) = try await URLSession.shared.download(from: remoteURL)
-        if let http = response as? HTTPURLResponse, !(200...299).contains(http.statusCode) {
-            throw LocalModelDownloadError.badStatus(http.statusCode)
-        }
-        onPhase(.downloading(fractionCompleted: 0.9))
-
-        // `download(from:)` hands back a temp file that disappears when this
-        // scope ends, so move it somewhere stable before unzipping.
+        // Stream to disk so we can report real byte progress; `download(from:)`
+        // only yields one completion callback and no intermediate values.
         let archive = parent.appendingPathComponent("\(modelName).zip")
         try? FileManager.default.removeItem(at: archive)
-        try FileManager.default.moveItem(at: tempFile, to: archive)
+        let downloader = ZipDownloadProgressDelegate(destination: archive) { fraction in
+            onPhase(.downloading(fractionCompleted: fraction))
+        }
+        try await downloader.run(url: remoteURL)
         defer { try? FileManager.default.removeItem(at: archive) }
+        onPhase(.unzipping)
 
         let unpackRoot = parent.appendingPathComponent(".unzip-\(UUID().uuidString)")
         try FileManager.default.createDirectory(at: unpackRoot, withIntermediateDirectories: true)
@@ -165,6 +163,9 @@ public enum LocalModelDownloader {
         /// File download in progress. `fractionCompleted` is 0.0...1.0 across
         /// the network download only.
         case downloading(fractionCompleted: Double)
+        /// Archive downloaded; unpacking is about to start. Carries no fraction
+        /// because ZIPFoundation reports no progress.
+        case unzipping
         /// Files are present on disk (either freshly downloaded or already
         /// cached). Prewarm is about to start.
         case prewarmStart
@@ -232,6 +233,80 @@ public enum LocalModelDownloader {
     }
 }
 
+
+/// Streams a remote archive to disk while reporting byte progress.
+///
+/// `URLSession.download(from:)` reports nothing until the transfer ends, which
+/// left the UI stuck at 0% for the ~2 minute transfer of a 477 MB archive.
+/// `URLSessionDataDelegate` gives us `didReceive data:` callbacks instead.
+public final class ZipDownloadProgressDelegate: NSObject, URLSessionDataDelegate, @unchecked Sendable {
+    private let destination: URL
+    private let onProgress: @Sendable (Double) -> Void
+    private var expectedBytes: Int64 = 0
+    private var receivedBytes: Int64 = 0
+    private var fileHandle: FileHandle?
+    private var continuation: CheckedContinuation<Void, Error>?
+    private var failure: (any Error)?
+
+    public init(destination: URL, onProgress: @escaping @Sendable (Double) -> Void) {
+        self.destination = destination
+        self.onProgress = onProgress
+    }
+
+    public func run(url: URL) async throws {
+        try await withCheckedThrowingContinuation { (continuation: CheckedContinuation<Void, Error>) in
+            self.continuation = continuation
+            let session = URLSession(configuration: .default, delegate: self, delegateQueue: nil)
+            session.dataTask(with: url).resume()
+        }
+        if let failure { throw failure }
+    }
+
+    private func finish(_ error: (any Error)?) {
+        try? fileHandle?.close()
+        fileHandle = nil
+        if let error, failure == nil { failure = error }
+        continuation?.resume(throwing: error ?? URLError(.unknown))
+        continuation = nil
+    }
+
+    private func succeed() {
+        try? fileHandle?.close()
+        fileHandle = nil
+        continuation?.resume()
+        continuation = nil
+    }
+
+    public func urlSession(
+        _ session: URLSession,
+        dataTask: URLSessionDataTask,
+        didReceive response: URLResponse,
+        completionHandler: @escaping (URLSession.ResponseDisposition) -> Void
+    ) {
+        if let http = response as? HTTPURLResponse, !(200...299).contains(http.statusCode) {
+            completionHandler(.cancel)
+            finish(LocalModelDownloadError.badStatus(http.statusCode))
+            return
+        }
+        expectedBytes = response.expectedContentLength
+        FileManager.default.createFile(atPath: destination.path, contents: nil)
+        fileHandle = try? FileHandle(forWritingTo: destination)
+        completionHandler(.allow)
+    }
+
+    public func urlSession(_ session: URLSession, dataTask: URLSessionDataTask, didReceive data: Data) {
+        fileHandle?.write(data)
+        receivedBytes += Int64(data.count)
+        guard expectedBytes > 0 else { return }
+        let fraction = min(Double(receivedBytes) / Double(expectedBytes), 1.0)
+        onProgress(fraction)
+    }
+
+    public func urlSession(_ session: URLSession, task: URLSessionTask, didCompleteWithError error: (any Error)?) {
+        if let error { finish(error) } else { succeed() }
+        session.finishTasksAndInvalidate()
+    }
+}
 
 /// Failures specific to self-hosted model archives.
 public enum LocalModelDownloadError: LocalizedError {

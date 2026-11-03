@@ -56,6 +56,26 @@ struct LocalModelCard: View {
         return 0
     }
 
+    private var currentStage: ModelDownloadManager.DownloadStage {
+        if let whisperModel = model as? WhisperKitModel {
+            return downloadManager.currentStage(for: whisperModel)
+        } else if let parakeetModel = model as? ParakeetModel {
+            return downloadManager.currentStage(for: parakeetModel)
+        }
+        return .idle
+    }
+
+    /// Short status line shown under the card title while downloading.
+    private var stageLabel: String? {
+        switch currentStage {
+        case .idle: nil
+        case .downloading: String(localized: "Downloading")
+        case .unzipping: String(localized: "Unzipping")
+        case .preparing: String(localized: "Preparing")
+        case .finishing: String(localized: "Finishing")
+        }
+    }
+
     private var modelSize: String? {
         if let whisperModel = model as? WhisperKitModel {
             return whisperModel.size
@@ -200,6 +220,27 @@ struct LocalModelCard: View {
                     value: modelAccuracy * 10,
                     color: accuracyColor
                 )
+            }
+
+            // Download progress: percentage plus the coarse stage, using the
+            // same card styling as the rest of this screen.
+            if downloadStatus == .downloading {
+                VStack(alignment: .leading, spacing: 8) {
+                    HStack(spacing: 8) {
+                        Text(stageLabel ?? String(localized: "Downloading"))
+                            .font(.subheadline.weight(.medium))
+                        Spacer(minLength: 0)
+                        Text(currentProgress, format: .percent.precision(.fractionLength(0)))
+                            .font(.subheadline.monospacedDigit())
+                            .foregroundStyle(.secondary)
+                            .contentTransition(.numericText())
+                    }
+
+                    ProgressView(value: min(max(currentProgress, 0), 1))
+                        .progressViewStyle(.linear)
+                        .tint(.accentColor)
+                }
+                .animation(.easeInOut(duration: 0.3), value: currentProgress)
             }
 
             // Description

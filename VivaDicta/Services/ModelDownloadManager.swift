@@ -116,6 +116,19 @@ class ModelDownloadManager {
     }
 
     /// Download progress per model (0.0 to 1.0), keyed by model name.
+    /// Coarse stage of the current download, shown next to the percentage.
+    /// Kept separate from the numeric progress because unzip/prewarm/load take
+    /// a long time while the fraction barely moves.
+    public enum DownloadStage: Equatable {
+        case idle
+        case downloading
+        case unzipping
+        case preparing
+        case finishing
+    }
+
+    public var downloadStages: [String: DownloadStage] = [:]
+
     public var downloadProgress: [String: Double] = [:]
 
     /// Current download status per model, keyed by model name.
@@ -172,6 +185,11 @@ class ModelDownloadManager {
     ///
     /// - Parameter model: The model to check.
     /// - Returns: Progress value between 0.0 and 1.0.
+    /// Current coarse stage for a model, `.idle` when nothing is running.
+    public func currentStage(for model: any TranscriptionModel) -> DownloadStage {
+        downloadStages[model.name] ?? .idle
+    }
+
     public func currentProgress(for model: any TranscriptionModel) -> Double {
         if model is ParakeetModel || model is WhisperKitModel {
             return downloadProgress[model.name] ?? 0.0
@@ -280,6 +298,7 @@ class ModelDownloadManager {
             try? await Task.sleep(for: .seconds(0.5))
 
             downloadProgress.removeValue(forKey: model.name)
+            downloadStages.removeValue(forKey: model.name)
             onModelDownloaded?(model)
 
         } catch is CancellationError {
@@ -288,6 +307,7 @@ class ModelDownloadManager {
         } catch {
             downloadStatuses[model.name] = .download
             downloadProgress.removeValue(forKey: model.name)
+            downloadStages.removeValue(forKey: model.name)
 
             logger.logError("❌ Failed to download \(model.displayName): \(error.localizedDescription)")
             throw error
@@ -321,18 +341,36 @@ class ModelDownloadManager {
                         switch phase {
                         case .downloading(let fractionCompleted):
                             // First 70% of overall progress represents the download.
+                            self.downloadStages[modelName] = .downloading
                             self.downloadProgress[modelName] = fractionCompleted * 0.7
 
-                        case .prewarmStart:
-                            self.logger.logNotice("🔥 Prewarming model: \(whisperKitModelName)")
-                            self.downloadProgress[modelName] = 0.75
-                            phaseState.prewarmStart = Date()
-                            phaseState.prewarmProgressTask = Task { @MainActor [weak self] in
-                                self?.logger.logNotice("📊 Starting pre-warm progress animation from 75% to 90%")
+                        case .unzipping:
+                            // Network transfer is done; unpacking 477 MB of
+                            // CoreML weights takes a while and reports nothing.
+                            self.downloadStages[modelName] = .unzipping
+                            self.logger.logNotice("📦 Unzipping model archive: \(whisperKitModelName)")
+                            self.downloadProgress[modelName] = 0.7
+                            phaseState.unzipProgressTask = Task { @MainActor [weak self] in
                                 await self?.animateProgressExponentially(
                                     for: modelName,
-                                    from: 0.75,
-                                    to: 0.9,
+                                    from: 0.7,
+                                    to: 0.85,
+                                    maxDuration: 120.0
+                                )
+                            }
+
+                        case .prewarmStart:
+                            phaseState.unzipProgressTask?.cancel()
+                            self.downloadStages[modelName] = .preparing
+                            self.logger.logNotice("🔥 Prewarming model: \(whisperKitModelName)")
+                            self.downloadProgress[modelName] = 0.85
+                            phaseState.prewarmStart = Date()
+                            phaseState.prewarmProgressTask = Task { @MainActor [weak self] in
+                                self?.logger.logNotice("📊 Starting pre-warm progress animation from 85% to 93%")
+                                await self?.animateProgressExponentially(
+                                    for: modelName,
+                                    from: 0.85,
+                                    to: 0.93,
                                     maxDuration: 240.0
                                 )
                                 self?.logger.logNotice("📊 Pre-warm progress animation completed or cancelled")
@@ -344,6 +382,7 @@ class ModelDownloadManager {
                                 self.logger.logNotice("✅ Model prewarmed in \(phaseState.prewarmDuration.formatted(.number.precision(.fractionLength(2)))) seconds")
                             }
                             phaseState.prewarmProgressTask?.cancel()
+                            self.downloadStages[modelName] = .finishing
                             self.downloadProgress[modelName] = 0.9
                             self.logger.logNotice("📚 Loading model: \(whisperKitModelName)")
                             phaseState.loadStart = Date()
@@ -406,6 +445,7 @@ class ModelDownloadManager {
         var prewarmDuration: TimeInterval = 0
         var loadStart: Date?
         var loadDuration: TimeInterval = 0
+        var unzipProgressTask: Task<Void, Never>?
         var prewarmProgressTask: Task<Void, Never>?
         var loadProgressTask: Task<Void, Never>?
     }
