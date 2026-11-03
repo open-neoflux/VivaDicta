@@ -38,9 +38,6 @@ public enum AIProvider: String, CaseIterable, Identifiable, Codable, Sendable {
     case ollama
     case ollamaCloud
     case customOpenAI
-    /// Unified on-device provider: covers both the LiteRT Gemma models and the
-    /// MLX models. The runtime is chosen from the selected model id.
-    case local
 
     public var displayName: String {
         switch self {
@@ -100,8 +97,6 @@ public enum AIProvider: String, CaseIterable, Identifiable, Codable, Sendable {
             "Ollama Cloud"
         case .customOpenAI:
             "Custom"
-        case .local:
-            "Local"
         }
     }
 
@@ -162,14 +157,12 @@ public enum AIProvider: String, CaseIterable, Identifiable, Codable, Sendable {
             "ollama"
         case .customOpenAI:
             nil // Use SF Symbol "server.rack" directly in view
-        case .local:
-            nil // Per-model assets / cpu symbol used directly in the cards (on-device)
         }
     }
 
     /// Returns true if this provider uses an SF Symbol instead of an asset
     public var usesSFSymbol: Bool {
-        self == .apple || self == .customOpenAI || self == .local
+        self == .apple || self == .customOpenAI
     }
 
     /// Returns true when the selected model can stream text responses incrementally.
@@ -194,8 +187,7 @@ public enum AIProvider: String, CaseIterable, Identifiable, Codable, Sendable {
              .huggingFace,
              .ollama,
              .ollamaCloud,
-             .customOpenAI,
-             .local:
+             .customOpenAI:
             true
         default:
             false
@@ -235,7 +227,7 @@ public enum AIProvider: String, CaseIterable, Identifiable, Codable, Sendable {
     /// Returns true if this provider requires an API key
     /// Note: customOpenAI doesn't require API key through the standard flow - it's handled separately
     public var requiresAPIKey: Bool {
-        self != .apple && self != .ollama && self != .customOpenAI && self != .copilot && self != .local
+        self != .apple && self != .ollama && self != .customOpenAI && self != .copilot
     }
 
     /// Cloud-based AI providers (require API key, network connection)
@@ -280,13 +272,11 @@ public enum AIProvider: String, CaseIterable, Identifiable, Codable, Sendable {
     /// Local AI providers that run on-device or local network (no API key needed)
     public static let localProviders: [AIProvider] = [
         .apple,
-        .local,
         .ollama]
 
     /// All general-purpose AI providers including on-device and local
     public static let generalProviders: [AIProvider] = [
         .apple,
-        .local,
         .ollama,
         .ollamaCloud,
         .customOpenAI,
@@ -365,8 +355,6 @@ public enum AIProvider: String, CaseIterable, Identifiable, Codable, Sendable {
             return "https://ollama.com/v1/chat/completions"
         case .customOpenAI:
             return "" // URL is configurable, stored in UserDefaults
-        case .local:
-            return "" // On-device, no URL needed
         }
     }
 
@@ -451,8 +439,6 @@ public enum AIProvider: String, CaseIterable, Identifiable, Codable, Sendable {
             return "gpt-oss:120b"
         case .customOpenAI:
             return "" // Model is configurable, stored in UserDefaults
-        case .local:
-            return "qwen3.5-2b-mlx"
         }
     }
 
@@ -489,7 +475,7 @@ public enum AIProvider: String, CaseIterable, Identifiable, Codable, Sendable {
         case .huggingFace: "huggingFaceAPIKey"
         case .customOpenAI: "customOpenAIAPIKey"
         case .ollamaCloud: "ollamaCloudAPIKey"
-        case .apple, .ollama, .copilot, .local: ""
+        case .apple, .ollama, .copilot: ""
         }
     }
 
@@ -750,50 +736,7 @@ public enum AIProvider: String, CaseIterable, Identifiable, Codable, Sendable {
             ]
         case .customOpenAI:
             return [] // Model is configured by user
-        case .local:
-            // On-device models; AIService picks the runtime by id (see
-            // `localRuntime(forModelID:)`):
-            //   gemma-4-*   -> LiteRT (Metal GPU, foreground-only)
-            //   *-coreml    -> CoreML (Apple Neural Engine, works backgrounded)
-            //   *-mlx       -> MLX    (Metal GPU, foreground-only)
-            return ["gemma-4-E2B", "gemma-4-E4B",
-                    "qwen3.5-2b-coreml", "qwen3.5-0.8b-coreml",
-                    "qwen3.5-4b-mlx", "qwen3.5-2b-mlx", "qwen3.5-0.8b-mlx", "phi-4-mini-mlx",
-                    "llama-3.2-1b-mlx", "llama-3.2-3b-mlx", "ministral-3b-mlx", "falcon3-3b-mlx", "granite-3.3-2b-mlx"]
         }
-    }
-}
-
-// MARK: - On-device runtime classification
-
-public extension AIProvider {
-    /// The on-device runtime backing a `.local` model id.
-    enum LocalRuntime: Sendable {
-        /// LiteRT-LM (Gemma) - runs on the Metal GPU.
-        case liteRT
-        /// MLX - runs on the Metal GPU.
-        case mlx
-        /// CoreML-LLM - runs on the Apple Neural Engine (ANE).
-        case coreML
-
-        /// Whether the runtime executes on the ANE rather than the Metal GPU.
-        /// GPU runtimes cannot run while the app is backgrounded (iOS blocks GPU
-        /// command-buffer submission), so only ANE runtimes work from the keyboard.
-        public var runsOnNeuralEngine: Bool { self == .coreML }
-    }
-
-    /// Classifies a `.local` model id by its backing runtime. The id suffix is the
-    /// discriminator (`-coreml`, `-mlx`); Gemma ids (`gemma-4-*`) default to LiteRT.
-    static func localRuntime(forModelID id: String) -> LocalRuntime {
-        if id.hasSuffix("-coreml") { return .coreML }
-        if id.hasSuffix("-mlx") { return .mlx }
-        return .liteRT
-    }
-
-    /// True when a `.local` model runs on the ANE and therefore works while the
-    /// app is backgrounded (e.g. driven from the keyboard).
-    static func localModelRunsOnNeuralEngine(_ id: String) -> Bool {
-        localRuntime(forModelID: id).runsOnNeuralEngine
     }
 }
 

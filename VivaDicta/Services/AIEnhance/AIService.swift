@@ -19,7 +19,6 @@ import CloudTranscription
 import AICore
 import AIProviders
 import AIKit
-import LocalLLM
 
 /// Service responsible for AI-powered text enhancement of transcriptions.
 ///
@@ -60,9 +59,6 @@ class AIService {
 
     private enum StreamingRoute {
         case apple
-        case localGemma
-        case localMLX
-        case localCoreML
         case anthropic
         case copilot
         case geminiOAuth
@@ -802,14 +798,6 @@ class AIService {
                 logger.logWarning("No Ollama model selected")
                 return false
             }
-        } else if aiProvider == .local {
-            // On-device needs no API key, but the selected model must be
-            // downloaded - we don't silently download during processing. A mode
-            // whose model was deleted is not properly configured.
-            guard Self.isLocalModelDownloaded(mode.aiModel) else {
-                logger.logWarning("On-device model '\(mode.aiModel)' is not downloaded")
-                return false
-            }
         } else if aiProvider == .customOpenAI {
             // Custom OpenAI needs URL and model configured
             guard !customOpenAIEndpointURL.isEmpty else {
@@ -956,7 +944,7 @@ class AIService {
         let startTime = Date()
         let mode = modeOverride ?? selectedMode
 
-        let (systemMessage, formattedText) = buildVariationMessages(text: text, preset: preset, compact: usesCompactPrompt(forModel: mode.aiModel))
+        let (systemMessage, formattedText) = buildVariationMessages(text: text, preset: preset, compact: false)
 
         lastSystemMessageSent = systemMessage
         lastUserMessageSent = formattedText
@@ -1045,46 +1033,10 @@ class AIService {
         return (systemMessage, userMessage)
     }
 
-    /// The unified `.local` provider hosts both runtimes; the model id picks one.
-    /// Gemma ids (gemma-4-E2B/E4B) are LiteRT; everything else is MLX.
-    private func isLiteRTGemmaModel(_ modelID: String) -> Bool {
-        LiteRTGemmaVariant(rawValue: modelID) != nil
-    }
-
-    /// Whether a model should get the lean system prompt. CoreML runs recurrent
-    /// (per-token) prefill, so time-to-first-token scales with prompt length - a
-    /// ~500-token system prompt adds tens of seconds. The lean (~120-token) prompt
-    /// cuts that. GPU runtimes (LiteRT/MLX) batch-prefill and cloud/Apple FM are
-    /// unaffected, so they keep the full prompt.
-    private func usesCompactPrompt(forModel modelID: String) -> Bool {
-        AIProvider.localRuntime(forModelID: modelID) == .coreML
-    }
-
-    /// On-device LLMs (Gemma/LiteRT, MLX) run inference on the Metal GPU
-    /// in-process. iOS forbids submitting GPU command buffers while the app is
-    /// backgrounded (`kIOGPUCommandBufferCallbackErrorBackgroundExecutionNotPermitted`):
-    /// MLX reacts by throwing an uncaught C++ exception that crashes the process,
-    /// and LiteRT hangs - neither is recoverable after the fact. This happens when
-    /// AI processing is triggered from the keyboard, because the main app runs the
-    /// work in the background on the keyboard's behalf. So we refuse before any GPU
-    /// work is submitted. Apple FM (out-of-process) and cloud providers are
-    /// unaffected and remain available from the keyboard.
-    private func ensureForegroundForOnDeviceLLM() throws {
-        guard UIApplication.shared.applicationState == .background else { return }
-        logger.logError("AI Processing - on-device LLM requested while backgrounded; refusing (GPU unavailable in background)")
-        throw EnhancementError.onDeviceLLMRequiresForeground
-    }
-
     private func resolvedStreamingRoute(for aiProvider: AIProvider, mode: VivaMode) -> StreamingRoute? {
         switch aiProvider {
         case .apple:
             return .apple
-        case .local:
-            switch AIProvider.localRuntime(forModelID: mode.aiModel) {
-            case .coreML: return .localCoreML
-            case .liteRT: return .localGemma
-            case .mlx: return .localMLX
-            }
         case .openAI:
             if isOpenAISignedIn {
                 return .openAIOAuth
@@ -1172,7 +1124,7 @@ class AIService {
             return ""
         }
 
-        let sysMsg = systemMessage ?? getSystemMessage(compact: usesCompactPrompt(forModel: mode.aiModel))
+        let sysMsg = systemMessage ?? getSystemMessage(compact: false)
         let userMsg = preFormattedUserMessage ?? formatTranscriptForLLM(text)
         lastSystemMessageSent = sysMsg
         lastUserMessageSent = userMsg
@@ -1195,32 +1147,6 @@ class AIService {
             } else {
                 throw EnhancementError.notConfigured
             }
-        case .localGemma:
-            try ensureForegroundForOnDeviceLLM()
-            logger.logDebug("AI Processing - Using on-device Gemma (LiteRT) streaming")
-            await OnDeviceModelMemory.shared.ensureOnlyResident(.liteRT)
-            let provider = LiteRTGemmaTextProvider(model: mode.aiModel)
-            let result = try await provider.enhanceStreaming(systemMessage: sysMsg, userMessage: userMsg, onPartialResponse: onPartialResponse)
-            return await finalizeStreamingResult(result, onPartialResponse: onPartialResponse)
-        case .localMLX:
-            try ensureForegroundForOnDeviceLLM()
-            logger.logDebug("AI Processing - Using on-device MLX streaming")
-            await OnDeviceModelMemory.shared.ensureOnlyResident(.mlx)
-            // Per-preset temperature (extractive presets -> greedy), reusing the
-            // same profile Apple FM uses.
-            let temperature = AppleFoundationModelSamplingProfile.profile(for: appleFMPresetID ?? mode.presetId).temperature
-            let provider = LocalMLXTextProvider(model: mode.aiModel, temperature: temperature)
-            let result = try await provider.enhanceStreaming(systemMessage: sysMsg, userMessage: userMsg, onPartialResponse: onPartialResponse)
-            return await finalizeStreamingResult(result, onPartialResponse: onPartialResponse)
-        case .localCoreML:
-            // CoreML runs on the ANE, which IS permitted in the background, so this
-            // route is intentionally NOT gated by `ensureForegroundForOnDeviceLLM()`
-            // - it is the on-device option that works from the keyboard.
-            logger.logDebug("AI Processing - Using on-device Qwen (CoreML/ANE) streaming")
-            await OnDeviceModelMemory.shared.ensureOnlyResident(.coreML)
-            let provider = CoreMLQwenTextProvider(model: mode.aiModel)
-            let result = try await provider.enhanceStreaming(systemMessage: sysMsg, userMessage: userMsg, onPartialResponse: onPartialResponse)
-            return await finalizeStreamingResult(result, onPartialResponse: onPartialResponse)
         case .anthropic:
             logger.logDebug("AI Processing - Using Anthropic streaming")
             logger.logDebug("AI Processing - Model: \(mode.aiModel)")
@@ -1392,35 +1318,6 @@ class AIService {
             } else {
                 throw EnhancementError.notConfigured
             }
-        }
-
-        // Handle on-device models. The model id picks the runtime:
-        // Gemma (gemma-4-*) -> LiteRT (GPU), *-coreml -> CoreML (ANE), else MLX (GPU).
-        if aiProvider == .local {
-            let sysMsg = systemMessage ?? getSystemMessage(compact: usesCompactPrompt(forModel: mode.aiModel))
-            let userMsg = preFormattedUserMessage ?? formatTranscriptForLLM(text)
-            lastSystemMessageSent = sysMsg
-            lastUserMessageSent = userMsg
-            let result: String
-            switch AIProvider.localRuntime(forModelID: mode.aiModel) {
-            case .coreML:
-                // ANE - works backgrounded; intentionally NOT foreground-gated.
-                logger.logDebug("AI Processing - Using on-device Qwen (CoreML/ANE)")
-                await OnDeviceModelMemory.shared.ensureOnlyResident(.coreML)
-                result = try await CoreMLQwenTextProvider(model: mode.aiModel).enhance(systemMessage: sysMsg, userMessage: userMsg)
-            case .liteRT:
-                try ensureForegroundForOnDeviceLLM()
-                logger.logDebug("AI Processing - Using on-device Gemma (LiteRT)")
-                await OnDeviceModelMemory.shared.ensureOnlyResident(.liteRT)
-                result = try await LiteRTGemmaTextProvider(model: mode.aiModel).enhance(systemMessage: sysMsg, userMessage: userMsg)
-            case .mlx:
-                try ensureForegroundForOnDeviceLLM()
-                logger.logDebug("AI Processing - Using on-device MLX")
-                await OnDeviceModelMemory.shared.ensureOnlyResident(.mlx)
-                let temperature = AppleFoundationModelSamplingProfile.profile(for: appleFMPresetID ?? mode.presetId).temperature
-                result = try await LocalMLXTextProvider(model: mode.aiModel, temperature: temperature).enhance(systemMessage: sysMsg, userMessage: userMsg)
-            }
-            return AIEnhancementOutputFilter.filter(result.trimmingCharacters(in: .whitespacesAndNewlines))
         }
 
         // Handle Ollama (local server)
@@ -1782,22 +1679,6 @@ class AIService {
         )
     }
 
-    // MARK: - On-device model availability
-
-    /// Whether an on-device (`.local`) model id is downloaded, querying the runtime
-    /// its id selects (Gemma = LiteRT, `-coreml` = CoreML/ANE, everything else = MLX).
-    ///
-    /// The single source of truth for "is this local model on disk" - provider
-    /// connectivity, mode validation and the model picker all route through it, so
-    /// adding a runtime cannot leave one of them behind.
-    nonisolated static func isLocalModelDownloaded(_ id: String) -> Bool {
-        switch AIProvider.localRuntime(forModelID: id) {
-        case .coreML: CoreMLQwenVariant(modelID: id).isDownloaded
-        case .liteRT: LiteRTGemmaVariant(modelID: id).isDownloaded
-        case .mlx: LocalMLXModel(modelID: id).isDownloaded
-        }
-    }
-
     // MARK: - API Keys methods
     @MainActor
     public func refreshConnectedProviders() {
@@ -1810,19 +1691,6 @@ class AIService {
 
         // Add Ollama provider (always available, connection checked on-demand)
         providers.append(.ollama)
-
-        // Add the unified on-device provider only when at least one model is
-        // downloaded, across every runtime. "Connected" must match what the
-        // runtime can run: appending it unconditionally let the mode editor mark
-        // a local mode valid with no model on disk, which
-        // isProperlyConfigured(.local) then rejects - and enumerating runtimes by
-        // hand here left CoreML/ANE models out, so a downloaded Qwen3.5 CoreML
-        // model was invisible to the mode editor. Driving it off the provider's
-        // own model list keeps every runtime covered.
-        let anyLocalDownloaded = AIProvider.local.availableModels.contains(where: Self.isLocalModelDownloaded)
-        if anyLocalDownloaded {
-            providers.append(.local)
-        }
 
         // Add Custom OpenAI provider if configured AND verified
         if !customOpenAIEndpointURL.isEmpty && !customOpenAIModelName.isEmpty && customOpenAIIsVerified {
@@ -2228,12 +2096,6 @@ class AIService {
         // Copilot: show dynamically fetched models
         if provider == .copilot && isCopilotSignedIn {
             return copilotModels.isEmpty ? [CopilotAPIClient.defaultModel] : copilotModels
-        }
-        // On-device: only offer models already downloaded, so picking one here
-        // never silently kicks off a multi-GB download. Manage downloads from the
-        // AI Providers screen instead. The model id picks the runtime to query.
-        if provider == .local {
-            return provider.availableModels.filter(Self.isLocalModelDownloaded)
         }
         return provider.availableModels
     }

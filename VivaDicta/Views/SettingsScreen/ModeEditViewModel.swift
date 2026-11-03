@@ -10,7 +10,6 @@ import os
 import Presets
 import AICore
 import AIProviders
-import LocalLLM
 
 @Observable
 class ModeEditViewModel {
@@ -132,9 +131,6 @@ class ModeEditViewModel {
             }
             if provider == .customOpenAI {
                 return String(localized: "Configure Custom AI Provider in AI Providers settings, or disable AI Processing")
-            }
-            if provider == .local {
-                return String(localized: "Download the model in AI Providers, or disable AI Processing")
             }
             return String(localized: "Add API key to continue, or disable AI Processing")
         }
@@ -351,28 +347,7 @@ class ModeEditViewModel {
                 aiModel = OpenAIOAuthClient.defaultModel
                 logger.logInfo("OpenAI model '\(current)' not served over ChatGPT sign-in, reset to '\(OpenAIOAuthClient.defaultModel)'")
             }
-        } else if provider == .local {
-            // On-device: if the selected model was deleted, fall back to another
-            // downloaded one; if none remain, disable AI Processing for this mode
-            // (it can't run on-device without a downloaded model). The model id
-            // picks the runtime (Gemma = LiteRT, else MLX).
-            let downloaded = AIProvider.local.availableModels.filter { Self.isLocalModelDownloaded($0) }
-            if let current = aiModel, downloaded.contains(current) {
-                // Still valid - keep it.
-            } else if let firstDownloaded = downloaded.first {
-                aiModel = firstDownloaded
-                logger.logInfo("On-device model not available, reset to '\(firstDownloaded)'")
-            } else {
-                aiEnhanceEnabled = false
-                logger.logInfo("No on-device model downloaded; disabled AI Processing for this mode")
-            }
         }
-    }
-
-    /// True if an on-device model id is downloaded. Delegates to `AIService` so the
-    /// runtime lookup lives in one place (see `AIService.isLocalModelDownloaded`).
-    static func isLocalModelDownloaded(_ id: String) -> Bool {
-        AIService.isLocalModelDownloaded(id)
     }
 
     private func validateReminderExtractorModelSelection() {
@@ -659,19 +634,6 @@ class ModeEditViewModel {
         if provider == .customOpenAI {
             let modelName = aiService.customOpenAIModelName
             return modelName.isEmpty ? nil : modelName
-        }
-
-        if provider == .local {
-            // Seed a downloaded model: the picker only offers downloaded models,
-            // so the default must be downloaded too - otherwise the mode saves
-            // with the static default that isProperlyConfigured then rejects.
-            // Prefer the provider default if it's downloaded, else the first
-            // downloaded model.
-            let downloaded = provider.availableModels.filter { Self.isLocalModelDownloaded($0) }
-            if downloaded.contains(provider.defaultModel) {
-                return provider.defaultModel
-            }
-            return downloaded.first ?? provider.defaultModel
         }
 
         return provider.defaultModel

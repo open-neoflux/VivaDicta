@@ -288,7 +288,6 @@ struct VivaDictaApp: App {
                             // relies on the model staying loaded to serve requests
                             // from the background (CoreML/ANE).
                             if !AppGroupCoordinator.shared.isKeyboardSessionActive {
-                                Task { await OnDeviceModelMemory.shared.unloadAll(reason: "app backgrounded") }
                             }
                             updateShortcutItems()
                             RecentNotesCache.syncFromDatabase(modelContext: modelContainer.mainContext)

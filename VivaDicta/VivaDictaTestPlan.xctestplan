@@ -1,143 +1,134 @@
 {
-  "configurations" : [
+  "configurations": [
     {
-      "id" : "9D6DEFC5-3EB9-43B3-A7BA-924E1AC2437D",
-      "name" : "Configuration 1",
-      "options" : {
-
-      }
+      "id": "9D6DEFC5-3EB9-43B3-A7BA-924E1AC2437D",
+      "name": "Configuration 1",
+      "options": {}
     }
   ],
-  "defaultOptions" : {
-    "testTimeoutsEnabled" : true
+  "defaultOptions": {
+    "testTimeoutsEnabled": true
   },
-  "testTargets" : [
+  "testTargets": [
     {
-      "target" : {
-        "containerPath" : "container:VivaDicta.xcodeproj",
-        "identifier" : "18351E562E634FF000944940",
-        "name" : "VivaDictaTests"
+      "target": {
+        "containerPath": "container:VivaDicta.xcodeproj",
+        "identifier": "18351E562E634FF000944940",
+        "name": "VivaDictaTests"
       }
     },
     {
-      "target" : {
-        "containerPath" : "container:Modules\/Presets",
-        "identifier" : "PresetsTests",
-        "name" : "PresetsTests"
+      "target": {
+        "containerPath": "container:Modules/Presets",
+        "identifier": "PresetsTests",
+        "name": "PresetsTests"
       }
     },
     {
-      "target" : {
-        "containerPath" : "container:Modules\/OAuth",
-        "identifier" : "OAuthTests",
-        "name" : "OAuthTests"
+      "target": {
+        "containerPath": "container:Modules/OAuth",
+        "identifier": "OAuthTests",
+        "name": "OAuthTests"
       }
     },
     {
-      "target" : {
-        "containerPath" : "container:Modules\/CloudTranscription",
-        "identifier" : "CloudTranscriptionTests",
-        "name" : "CloudTranscriptionTests"
+      "target": {
+        "containerPath": "container:Modules/CloudTranscription",
+        "identifier": "CloudTranscriptionTests",
+        "name": "CloudTranscriptionTests"
       }
     },
     {
-      "target" : {
-        "containerPath" : "container:Modules\/TranscriptionKit",
-        "identifier" : "TranscriptionKitTests",
-        "name" : "TranscriptionKitTests"
+      "target": {
+        "containerPath": "container:Modules/TranscriptionKit",
+        "identifier": "TranscriptionKitTests",
+        "name": "TranscriptionKitTests"
       }
     },
     {
-      "target" : {
-        "containerPath" : "container:Modules\/TranscriptionCore",
-        "identifier" : "TranscriptionCoreTests",
-        "name" : "TranscriptionCoreTests"
+      "target": {
+        "containerPath": "container:Modules/TranscriptionCore",
+        "identifier": "TranscriptionCoreTests",
+        "name": "TranscriptionCoreTests"
       }
     },
     {
-      "target" : {
-        "containerPath" : "container:Modules\/TestUtilities",
-        "identifier" : "TestUtilitiesTests",
-        "name" : "TestUtilitiesTests"
+      "target": {
+        "containerPath": "container:Modules/TestUtilities",
+        "identifier": "TestUtilitiesTests",
+        "name": "TestUtilitiesTests"
       }
     },
     {
-      "target" : {
-        "containerPath" : "container:Modules\/Keychain",
-        "identifier" : "KeychainTests",
-        "name" : "KeychainTests"
+      "target": {
+        "containerPath": "container:Modules/Keychain",
+        "identifier": "KeychainTests",
+        "name": "KeychainTests"
       }
     },
     {
-      "target" : {
-        "containerPath" : "container:Modules\/Networking",
-        "identifier" : "NetworkingTests",
-        "name" : "NetworkingTests"
+      "target": {
+        "containerPath": "container:Modules/Networking",
+        "identifier": "NetworkingTests",
+        "name": "NetworkingTests"
       }
     },
     {
-      "target" : {
-        "containerPath" : "container:Modules\/LocalTranscription",
-        "identifier" : "LocalTranscriptionTests",
-        "name" : "LocalTranscriptionTests"
+      "target": {
+        "containerPath": "container:Modules/LocalTranscription",
+        "identifier": "LocalTranscriptionTests",
+        "name": "LocalTranscriptionTests"
       }
     },
     {
-      "target" : {
-        "containerPath" : "container:Modules\/LocalLLM",
-        "identifier" : "LocalLLMTests",
-        "name" : "LocalLLMTests"
+      "target": {
+        "containerPath": "container:Modules/AppGroup",
+        "identifier": "AppGroupTests",
+        "name": "AppGroupTests"
       }
     },
     {
-      "target" : {
-        "containerPath" : "container:Modules\/AppGroup",
-        "identifier" : "AppGroupTests",
-        "name" : "AppGroupTests"
+      "target": {
+        "containerPath": "container:Modules/AudioRecording",
+        "identifier": "AudioRecordingTests",
+        "name": "AudioRecordingTests"
       }
     },
     {
-      "target" : {
-        "containerPath" : "container:Modules\/AudioRecording",
-        "identifier" : "AudioRecordingTests",
-        "name" : "AudioRecordingTests"
+      "target": {
+        "containerPath": "container:Modules/AIKit",
+        "identifier": "AIKitTests",
+        "name": "AIKitTests"
       }
     },
     {
-      "target" : {
-        "containerPath" : "container:Modules\/AIKit",
-        "identifier" : "AIKitTests",
-        "name" : "AIKitTests"
+      "target": {
+        "containerPath": "container:Modules/AICore",
+        "identifier": "AICoreTests",
+        "name": "AICoreTests"
       }
     },
     {
-      "target" : {
-        "containerPath" : "container:Modules\/AICore",
-        "identifier" : "AICoreTests",
-        "name" : "AICoreTests"
+      "target": {
+        "containerPath": "container:Modules/AIProviders",
+        "identifier": "AIProvidersTests",
+        "name": "AIProvidersTests"
       }
     },
     {
-      "target" : {
-        "containerPath" : "container:Modules\/AIProviders",
-        "identifier" : "AIProvidersTests",
-        "name" : "AIProvidersTests"
+      "target": {
+        "containerPath": "container:Modules/TextProcessing",
+        "identifier": "TextProcessingTests",
+        "name": "TextProcessingTests"
       }
     },
     {
-      "target" : {
-        "containerPath" : "container:Modules\/TextProcessing",
-        "identifier" : "TextProcessingTests",
-        "name" : "TextProcessingTests"
-      }
-    },
-    {
-      "target" : {
-        "containerPath" : "container:Modules\/Analytics",
-        "identifier" : "AnalyticsTests",
-        "name" : "AnalyticsTests"
+      "target": {
+        "containerPath": "container:Modules/Analytics",
+        "identifier": "AnalyticsTests",
+        "name": "AnalyticsTests"
       }
     }
   ],
-  "version" : 1
+  "version": 1
 }

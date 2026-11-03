@@ -18,7 +18,6 @@ final class AppDelegate: UIResponder, UIApplicationDelegate {
         BackgroundTaskManager.registerBGTaskHandler()
         // Arm the on-device LLM memory monitor (frees the model under pressure so
         // we don't get jetsammed while holding a ~1-2 GB model).
-        OnDeviceModelMemory.shared.activate()
         return true
     }
 
